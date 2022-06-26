@@ -269,9 +269,450 @@ const styles = StyleSheet.create({
 })
 ```
 
-## Componente Campo
+## Componente Campo #01
 
+- Dentro de src vamos criar uma pasta chamada _components_ e dentro dela vamos criar o componente funcional Campo/_Field_:
 
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import params from "../params";
+
+const Field = (props) => {
+  return (
+    <View>
+
+    </View>
+  );
+}
+
+export default Field;
+```
+
+- Inicialmente, iremos criar uma constante chamada _styleField_, que vai receber os estilos que iremos aplicar ao campo. O estilo padrão vai se chamar _field_(iremos criar esse objeto de estilo com o StyleSheet mais a frente):
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import params from "../params";
+
+const Field = (props) => {
+
+  const styleField = [styles.field];
+
+  return (
+    <View style={styleField}>
+
+    </View>
+  );
+}
+
+export default Field;
+```
+
+- Em seguida, iremos realizar a verificação se o array _styleField_ tiver apenas um elemento, vai ser empurrado/_push_ para dentro dele o estilo _regular_(iremos criar esse objeto de estilo com o StyleSheet mais a frente):
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import params from "../params";
+
+const Field = (props) => {
+
+  const styleField = [styles.field];
+  // vão haver outras consições para aplicação de estilo aqui(se o campo aberto, explodido) e caso passe por todos sem cair na condição siginifica que campinho tá regular
+  if (styleField.length === 1) return styleField.push(styles.regular);
+
+  return (
+    <View style={styleField}>
+
+    </View>
+  );
+}
+
+export default Field;
+```
+
+- Agora, vamos criar os objetos de estilos _field_ e _regular_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import params from "../params";
+
+const Field = (props) => {
+
+  const styleField = [styles.field];
+  if (styleField.length === 1) return styleField.push(styles.regular);
+
+  return (
+    <View style={styleField}>
+
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  field: { // todos os campos indepedentes de estarem explodidos ou não vão receber esse objeto de estilo
+    height: params.blockSize, // a altura do "campinho" vai ser a que definimos em params
+    width: params.blockSize, // a largura do "campinho" vai ser a que definimos em params
+    borderWidth: params.borderSize, // a largura da borda do "campinho" vai ser a que definimos em params
+  },
+  regular: {
+    backgroundColor: "#999", // cor do fundo do "campinho regular" cinza intermediário entre as duas bordas
+    borderLeftColor: "#CCC", // cor da borda esquerda do "campinho regular" cinza mais claro
+    borderTopColor: "#CCC", // cor da borda do topo do "campinho regular" cinza mais claro
+    borderRightColor: "#333", // cor da borda direita do "campinho regular" cinza mais escuro
+    borderBottomColor: "#333", // cor da borda de baixo do "campinho regular"  cinza mais escuro
+  },
+});
+
+export default Field;
+```
+
+- Feito isso, vamos importar o componente Campo/_Field_ dentro do componente principal(App) e em seguida referenciá-lo para visualizarmos em tela:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Field from "../components/Field";
+
+export default class App extends Component {
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>Iniciando o Minefield</Text>
+        <Text>Tamanho da grade: 
+          {params.getRowsAmount()}x{params.getColumnsAmount()}</Text>
+          
+        <Field />
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+})
+```
+
+## Componente Campo #02
+
+- Vamos esperar receber de props três atributos: primeiro _mined_ ou seja, se está minado ou não; _opened_ se o campo está aberto ou não; e _nearMines_ para sabermos quantas minhas temos ao redor do campo.
+Vamos usar o destructuring para receber esses valores de _props_ e armazenar em constantes com seus respectivos nomes:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import params from "../params";
+
+const Field = (props) => {
+  const { mined, opened, nearMines } = props;
+
+  const styleField = [styles.field];
+  if (styleField.length === 1) styleField.push(styles.regular);
+
+  return (
+    <View style={styleField}>
+      
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- Em seguida, vamos adicionar mais uma verificação para aplicação de estilo. No caso, se o campo tiver o atributo _opened_ verdadeiro/_true_, ou seja, tiver aberto, vamos empurrar/_push_ para dentro do array _styleField_ o objeto de estilo _opened_(iremos criar esse objeto de estilo com o StyleSheet mais a frente):
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import params from "../params";
+
+const Field = (props) => {
+  const { mined, opened, nearMines } = props;
+
+  const styleField = [styles.field];
+  if (opened) styleField.push(styles.opened);
+  if (styleField.length === 1) styleField.push(styles.regular);
+
+  return (
+    <View style={styleField}>
+      
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- Dando continuidade, antes do _return_ do JSX do componente iremos fazer uma condicional de aplicação de cores "em cima" do número de minas presentes dentro da propriedade _nearMines_.
+Primeiramente vamos criar uma variável chamada _color_ que inicialmente vai ser _null_ e em seguida iremos primeiro verificar se a quantidade de minas perto campo/_nearMines_ é maior que 0 e se passar aí sim é feita as demais verificações e aplicar cores ao _color_ de acordo com a quantidade de minas/_nearMines_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import params from "../params";
+
+const Field = (props) => {
+  const { mined, opened, nearMines } = props;
+
+  const styleField = [styles.field];
+  if (opened) styleField.push(styles.opened);
+  if (styleField.length === 1) styleField.push(styles.regular);
+
+  let color = null;
+  if (nearMines > 0) {
+    if (nearMines === 1) color = "#2A28D7";
+    if (nearMines === 2) color = "#2B520F";
+    if (nearMines > 2 && nearMines < 6) color = "#F9060A";
+    if (nearMines >= 6) color = "F221A9";
+  }
+
+  return (
+    <View style={styleField}>
+      
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- Em seguida, vamos importar o componente _Text_ do react native e referenciá-lo para exibirmos a quantidade de minas. Só que iremos exibir esse texto de forma condicional... a primeira verificação será que _mined_ seja falso(!mined ou seja, se for falso o ! vai tornar em true e vai passar na condição), ou seja, o campo não pode estar minado, pois se estiver minado no lugar do número terá uma mina:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+const Field = (props) => {
+  const { mined, opened, nearMines } = props;
+
+  const styleField = [styles.field];
+  if (opened) styleField.push(styles.opened);
+  if (styleField.length === 1) styleField.push(styles.regular);
+
+  let color = null;
+  if (nearMines > 0) {
+    if (nearMines === 1) color = "#2A28D7";
+    if (nearMines === 2) color = "#2B520F";
+    if (nearMines > 2 && nearMines < 6) color = "#F9060A";
+    if (nearMines >= 6) color = "F221A9";
+  }
+
+  return (
+    <View style={styleField}>
+      {!mined}
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- A segunda condição vai ser se o campo está aberto, ou seja, _opened_ true.
+E a terceira condição é que a quantidade de minas ao redor do campo _nearMines_ tem que ser maior que 0:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+const Field = (props) => {
+  const { mined, opened, nearMines } = props;
+
+  const styleField = [styles.field];
+  if (opened) styleField.push(styles.opened);
+  if (styleField.length === 1) styleField.push(styles.regular);
+
+  let color = null;
+  if (nearMines > 0) {
+    if (nearMines === 1) color = "#2A28D7";
+    if (nearMines === 2) color = "#2B520F";
+    if (nearMines > 2 && nearMines < 6) color = "#F9060A";
+    if (nearMines >= 6) color = "F221A9";
+  }
+
+  return (
+    <View style={styleField}>
+      {!mined && opened && nearMines > 0}
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- Se todas as condições forem verdadeiras(?) então será renderizado um _Text_ interpolado com a quantidade de minas _nearMines_ que recebemos via props e o seu _style_ vai ser _styles.label_(iremos criar esse objeto de estilo com o StyleSheet mais a frente) e a cor/_color_ vai ser exatamente a cor que foi inferida através da quantidade de minas. E se alguma condição for falsa(:) iremos retornar _false_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+const Field = (props) => {
+  const { mined, opened, nearMines } = props;
+
+  const styleField = [styles.field];
+  if (opened) styleField.push(styles.opened);
+  if (styleField.length === 1) styleField.push(styles.regular);
+
+  let color = null;
+  if (nearMines > 0) {
+    if (nearMines === 1) color = "#2A28D7";
+    if (nearMines === 2) color = "#2B520F";
+    if (nearMines > 2 && nearMines < 6) color = "#F9060A";
+    if (nearMines >= 6) color = "F221A9";
+  }
+
+  return (
+    <View style={styleField}>
+      {!mined && opened && nearMines > 0 
+      ? (<Text style={[styles.label, { color: color }]}>{nearMines}</Text>) // parênteses opcional 
+      : (false)}
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- Em seguida, iremos criar os objetos de estilo _opened_ e _label_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+const Field = (props) => {
+  const { mined, opened, nearMines } = props;
+
+  const styleField = [styles.field];
+  if (opened) styleField.push(styles.opened);
+  if (styleField.length === 1) styleField.push(styles.regular);
+
+  let color = null;
+  if (nearMines > 0) {
+    if (nearMines === 1) color = "#2A28D7";
+    if (nearMines === 2) color = "#2B520F";
+    if (nearMines > 2 && nearMines < 6) color = "#F9060A";
+    if (nearMines >= 6) color = "F221A9";
+  }
+
+  return (
+    <View style={styleField}>
+      {!mined && opened && nearMines > 0 
+      ? (<Text style={[styles.label, { color: color }]}>{nearMines}</Text>)
+      : (false)}
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  field: { 
+    height: params.blockSize, 
+    width: params.blockSize, 
+    borderWidth: params.borderSize, 
+  },
+  regular: {
+    backgroundColor: "#999", 
+    borderLeftColor: "#CCC",
+    borderTopColor: "#CCC", 
+    borderRightColor: "#333", 
+    borderBottomColor: "#333", 
+  },
+  opened: {
+    backgroundColor: "#999", // cor do fundo do "campinho" quando está aberto
+    borderColor: "#777", // cor das bordas do "campinho" quando está aberto
+
+    justifyContent: "center", // para mecher no alinhamento dos elementos/flex items no Eixo Principal/main axis(que nesse caso é a coluna/column) 
+    alignItems: "center", // para mecher no alinhamento dos elementos/flex items no eixo cruzado/cross axis(que nesse caso é no eixo da linha/row) 
+  },
+  label: {
+    fontWeight: "bold", // peso da fonte - bold/negrito
+    fontSize: params.fontSize, // o tamanho da fonte vai ser a que definimos em params
+  }
+});
+
+export default Field;
+```
+
+- Feito isso, dentro do componente _App_ vamos criar outras referênciar do Campo/_Field_ e passar via props os atributos _opened_ e _nearMines_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Field from "../components/Field";
+
+export default class App extends Component {
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>Iniciando o Minefield</Text>
+        <Text>Tamanho da grade: 
+          {params.getRowsAmount()}x{params.getColumnsAmount()}</Text>
+          
+        <Field />
+        <Field opened />
+        <Field opened nearMines={1} />
+        <Field opened nearMines={2} />
+        <Field opened nearMines={3} />
+        <Field opened nearMines={4} />
+        <Field opened nearMines={5} />
+        <Field opened nearMines={6} />
+        <Field opened nearMines={7} />
+        <Field opened nearMines={8} />
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+})
+```
 
 ## Criando APK
 
