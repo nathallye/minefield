@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
 })
 ```
 
-## Componente Campo #01
+## Componente Campo/Field #01
 
 - Dentro de src vamos criar uma pasta chamada _components_ e dentro dela vamos criar o componente funcional Campo/_Field_:
 
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
 })
 ```
 
-## Componente Campo #02
+## Componente Campo/Field #02
 
 - Vamos esperar receber de props três atributos: primeiro _mined_ ou seja, se está minado ou não; _opened_ se o campo está aberto ou não; e _nearMines_ para sabermos quantas minhas temos ao redor do campo.
 Vamos usar o destructuring para receber esses valores de _props_ e armazenar em constantes com seus respectivos nomes:
@@ -713,6 +713,10 @@ const styles = StyleSheet.create({
   // [...]
 })
 ```
+
+## Componente Mina/Mine
+
+
 
 ## Criando APK
 
