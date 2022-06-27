@@ -4,10 +4,10 @@ import { StyleSheet, View } from "react-native";
 const Flag = (props) => {
   return (
     <View style={styles.container}>
-      <View style={styles.flagpole} />
-      <View style={styles.flag} />
-      <View style={styles.base1} />
-      <View style={styles.base2} />
+      <View style={[styles.flagpole, props.bigger ? (styles.flagpoleBigger) : (null)]} />
+      <View style={[styles.flag, props.bigger ? (styles.flagBigger) : (null)]} />
+      <View style={[styles.base1, props.bigger ? (styles.base1Bigger) : (null)]} />
+      <View style={[styles.base2, props.bigger ? (styles.base2Bigger) : (null)]} />
     </View>
   )
 }
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     height: 14, // altura do mastro da bandeira 
     width: 2, // largura do mastro da bandeira
     
-    marginLeft: 9, // margem a esquerda do mastro da mandeira
+    marginLeft: 9, // margem a esquerda do mastro da bandeira
   },
   flag: {
     backgroundColor: "#F22", // cor de fundo da bandeira
@@ -53,6 +53,32 @@ const styles = StyleSheet.create({
     
     marginLeft: 5, // margem a esquerda da base2 da bandeira 
     marginTop: 12, // margem ao topo da base2 da bandeira
+  },
+  flagpoleBigger: {
+    height: 28,  // altura do mastro da bandeira maior
+    width: 4, // largura do mastro da bandeira maior
+
+    marginLeft: 16, // margem a esquerda do mastro da bandeira maior
+  },
+  flagBigger: {
+    height: 10, // altura da bandeira maior
+    width: 14, // largura da bandeira maior
+
+    marginLeft: 3, // margem a esquerda da bandeira maior
+  },
+  base1Bigger: {
+    height: 4, // altura da base1 da bandeira maior
+    width: 12, // largura da base1 um da bandeira maior
+    
+    marginLeft: 12, // margem a esquerda da base1 da bandeira maior
+    marginTop: 20, // margem ao topo da base1 da bandeira maior
+  },
+  base2Bigger: {
+    height: 4, // altura da base2 da bandeira maior
+    width: 20, // largura da base2 um da bandeira maior
+    
+    marginLeft: 8, // margem a esquerda da base2 da bandeira maior
+    marginTop: 24, // margem ao topo da base2 da bandeira maior
   },
 });
 
