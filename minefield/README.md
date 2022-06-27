@@ -716,7 +716,693 @@ const styles = StyleSheet.create({
 
 ## Componente Mina/Mine
 
+- Dentro de src/components vamos criar o componente funcional Mina/_Mine_:
 
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+const Mine = (props) => {
+  return (
+    <View style={styles.container}>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+
+  }
+})
+
+export default Mine;
+```
+
+- Dentro da _View_ container vamos inserir uma outra View que vai representar o miolo/núcleo da mina e iremos aplicar o objeto de estilo _coreMine_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+const Mine = (props) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.coreMine} />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+
+  },
+  coreMine: {
+
+  },
+})
+
+export default Mine;
+```
+
+- E outras _View_ que irão representar as "linhas" ao redor da mina, a primeira irá receber apenas o objeto de estilo _line_(essa vai ser a linha horizontal) e as demais irão receber o objeto de estilo _line_ e mais as propriedades que irão rotacionar(45°, 90° e 135°) essas linhas:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+const Mine = (props) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.coreMine} />
+      <View style={styles.line} /> {/*horizontal*/}
+      <View style={[styles.line, { transform: [{ rotate: "45deg" }] }]} /> {/*diagonal*/}
+      <View style={[styles.line, { transform: [{ rotate: "90deg" }] }]} /> {/*vertical*/}
+      <View style={[styles.line, { transform: [{ rotate: "135deg" }] }]} /> {/*diagonal*/}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+
+  },
+  coreMine: {
+
+  },
+  line: {
+
+  },
+})
+
+export default Mine;
+```
+
+- Agora, iremos aplicar as propriedades nos objetos de estilos _container_, _coreMine_ e _line_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+const Mine = (props) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.coreMine} />
+      <View style={styles.line} />
+      <View style={[styles.line, { transform: [{ rotate: "45deg" }] }]} /> 
+      <View style={[styles.line, { transform: [{ rotate: "90deg" }] }]} />
+      <View style={[styles.line, { transform: [{ rotate: "135deg" }] }]} />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: "center", // para mecher no alinhamento dos elementos/flex items no Eixo Principal/main axis(que nesse caso é a coluna/column) 
+    alignItems: "center", // para mecher no alinhamento dos elementos/flex items no Eixo Principal/main axis(que nesse caso é a coluna/column) 
+  },
+  coreMine: {
+    backgroundColor: "black", // cor de fundo do miolo/núcleo da mina
+
+    justifyContent: "center", // para mecher no alinhamento dos elementos/flex items no Eixo Principal/main axis(que nesse caso é a coluna/column)
+    alignItems: "center", // para mecher no alinhamento dos elementos/flex items no Eixo Principal/main axis(que nesse caso é a coluna/column) 
+
+    height: 14, // altura do miolo/núcleo da mina
+    width: 14, // largura do miolo/núcleo da mina
+    borderRadius: 10, // para arredondar a borda
+  },
+  line: {
+    backgroundColor: "black", // cor de fundo das linhas da mina
+
+    position: "absolute", // vai centralizar com o miolo por conta das propriedades de alinhamento do container
+    height: 3, // altura das linas da mina
+    width: 20, // largura das linhas da mina
+    borderRadius: 3, // as pontas das linhas da mina vão ser arredondadas 
+  },
+})
+
+export default Mine;
+```
+
+- Feito isso, dentro do componente Campo/_Field_ vamos importar o componente Mina/_Mine_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Mine from "./Mine";
+
+const Field = (props) => {
+  const { mined, opened, nearMines } = props;
+
+  // [...]
+
+  return (
+    <View style={styleField}>
+      {!mined && opened && nearMines > 0 
+      ? (<Text style={[styles.label, { color: color }]}>{nearMines}</Text>)
+      : (false)}
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- E além das propriedades _mined_, _opened_ e _nearMines_ vamos também esperar receber via props o _exploded_ para saber se o campo está ou não explodido.
+E iremos realizar a verificação se _exploded_ foi passado como props para o campo, se verdadeiro iremos empurrar o estilo _exploded_(iremos criar esse objeto de estilo com o StyleSheet mais a frente) para o array de estilos _styleField_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Mine from "./Mine";
+
+const Field = (props) => {
+  const { mined, opened, nearMines, exploded } = props;
+
+  const styleField = [styles.field];
+  if (opened) styleField.push(styles.opened);
+  if (exploded) styleField.push(styles.exploded);
+  if (styleField.length === 1) styleField.push(styles.regular);
+
+  let color = null;
+  if (nearMines > 0) {
+    if (nearMines === 1) color = "#2A28D7";
+    if (nearMines === 2) color = "#2B520F";
+    if (nearMines > 2 && nearMines < 6) color = "#F9060A";
+    if (nearMines >= 6) color = "F221A9";
+  }
+
+  return (
+    <View style={styleField}>
+      {!mined && opened && nearMines > 0 
+      ? (<Text style={[styles.label, { color: color }]}>{nearMines}</Text>)
+      : (false)}
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- E agora, iremos inserir uma renderização condicional para exibir ou não a Mina/_Mine_, pois só iremos exibir caso as props _mined_(campo está minado) e(&&) _opened_(campo está aberto) tenham sido passadas para o Campo/_Field_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Mine from "./Mine";
+
+const Field = (props) => {
+  const { mined, opened, nearMines, exploded } = props;
+
+  const styleField = [styles.field];
+  if (opened) styleField.push(styles.opened);
+  if (exploded) styleField.push(styles.exploded);
+  if (styleField.length === 1) styleField.push(styles.regular);
+
+  let color = null;
+  if (nearMines > 0) {
+    if (nearMines === 1) color = "#2A28D7";
+    if (nearMines === 2) color = "#2B520F";
+    if (nearMines > 2 && nearMines < 6) color = "#F9060A";
+    if (nearMines >= 6) color = "F221A9";
+  }
+
+  return (
+    <View style={styleField}>
+      {!mined && opened && nearMines > 0 
+      ? (<Text style={[styles.label, { color: color }]}>{nearMines}</Text>)
+      : (false)}
+
+      {mined && opened
+      ? (<Mine />)
+      : (false)}
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- Dando continuidade vamos criar o objeto de estilo _exploded_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Mine from "./Mine";
+
+const Field = (props) => {
+  const { mined, opened, nearMines, exploded } = props;
+
+  const styleField = [styles.field];
+  if (opened) styleField.push(styles.opened);
+  if (exploded) styleField.push(styles.exploded);
+  if (styleField.length === 1) styleField.push(styles.regular);
+
+  let color = null;
+  if (nearMines > 0) {
+    if (nearMines === 1) color = "#2A28D7";
+    if (nearMines === 2) color = "#2B520F";
+    if (nearMines > 2 && nearMines < 6) color = "#F9060A";
+    if (nearMines >= 6) color = "F221A9";
+  }
+
+  return (
+    <View style={styleField}>
+      {!mined && opened && nearMines > 0 
+      ? (<Text style={[styles.label, { color: color }]}>{nearMines}</Text>)
+      : (false)}
+
+      {mined && opened
+      ? (<Mine />)
+      : (false)}
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+  label: {
+    fontWeight: "bold", 
+    fontSize: params.fontSize, 
+  },
+  exploded: {
+    backgroundColor: "red", // quando a mina explodir a cor de fundo do campo vai ficar vermelha
+    borderColor: "red", // e a borda também
+  }
+});
+
+export default Field;
+```
+
+- E agora, voltando no componente _App_ além de ter componente os Campo/_Field_ com as props _opened_(aberto) e _nearMines_(com o número de minas ao redor).
+Também vamos inserir componentes _Field_ um com a propriedade _mined_(minado); outro _mined_(minado) e _opened_(aberto); e por fim _mined_(minado), _opened_(aberto) e _exploded_(explodiu):
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Field from "../components/Field";
+
+export default class App extends Component {
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>Iniciando o Minefield</Text>
+        <Text>Tamanho da grade: 
+          {params.getRowsAmount()}x{params.getColumnsAmount()}</Text>
+          
+        <Field />
+        <Field opened />
+        <Field opened nearMines={1} />
+        <Field opened nearMines={2} />
+        <Field opened nearMines={3} />
+        <Field opened nearMines={4} />
+        <Field opened nearMines={5} />
+        <Field opened nearMines={6} />
+        <Field opened nearMines={7} />
+        <Field opened nearMines={8} />
+        <Field mined />
+        <Field mined opened />
+        <Field mined opened exploded/>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...] 
+})
+```
+
+## Componente Bandeira/Flag #01
+
+- Dentro de src/components vamos criar o componente funcional Bandeira/_Flag_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+const Flag = (props) => {
+  return (
+    <View style={styles.container}>
+
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+
+  }
+});
+
+export default Flag;
+```
+
+- E para desenhar a bandeira vamos separar em vários componentes _View_(dentro da View container) que cada um vai desenhar uma parte da bandeira. 
+A primeira _View_ vai receber o objeto de estilo mastro/_flagpole_, a segunda vai receber o objeto de estilo _flag_ que vai ser a própria bandeira e a terceira vai receber o estilo _base1_ que vai ser responsável pela base menor e a quarta vai receber o objeto _base2_ que será a base maior da bandeira:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+const Flag = (props) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.flagpole} />
+      <View style={styles.flag} />
+      <View style={styles.base1} />
+      <View style={styles.base2} />
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+
+  },
+  flagpole: {
+
+  },
+  flag: {
+
+  },
+  base1: {
+
+  },
+  base2: {
+
+  },
+});
+
+export default Flag;
+```
+
+- Agora, vamos aplicar as propriedades nos objetos de estilo _container_, _flagpole_, _flag_, _base1_ e _base2_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+const Flag = (props) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.flagpole} />
+      <View style={styles.flag} />
+      <View style={styles.base1} />
+      <View style={styles.base2} />
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 2, // margem do topo do container
+  },
+  flagpole: {
+    backgroundColor: "#222", // cor de fundo do mastro da bandeira
+
+    position: "absolute", // posicionar o mastro da bandeira de acordo com o elemento pai(View container)
+    height: 14, // altura do mastro da bandeira 
+    width: 2, // largura do mastro da bandeira
+    
+    marginLeft: 9, // margem a esquerda do mastro da mandeira
+  },
+  flag: {
+    backgroundColor: "#F22", // cor de fundo da bandeira
+
+    position: "absolute", // posicionar a bandeira de acordo com o elemento pai(View container)
+    height: 5, // altura da bandeira
+    width: 6, // largura da bandeira
+    
+    marginLeft: 3, // margem a esquerda da bandeira
+  },
+  base1: {
+    backgroundColor: "#222", // cor de fundo da base menor da bandeira
+    
+    position: "absolute", // posicionar a base1 da bandeira de acordo com o elemento pai(View container)
+    height: 2, // altura da base1 da bandeira
+    width: 6, // largura da base um da bandeira
+    
+    marginLeft: 7, // margem a esquerda da base1 da bandeira
+    marginTop: 10, // margem ao topo da base1 da bandeira
+  },
+  base2: {
+    backgroundColor: "#222", // cor de fundo da base maior da bandeira
+
+    position: "absolute", // posicionar a base2 da bandeira de acordo com o elemento pai(View container)
+    height: 2, // altura da base1 da bandeira
+    width: 10, // largura da base1 da bandeira
+    
+    marginLeft: 5, // margem a esquerda da base2 da bandeira 
+    marginTop: 12, // margem ao topo da base2 da bandeira
+  },
+});
+
+export default Flag;
+```
+
+- Feito isso, no componente Campo/_Field_ vamos importar o componente Bandeira/_Flag_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Mine from "./Mine";
+import Flag from "./Flag";
+
+const Field = (props) => {
+  const { mined, opened, nearMines, exploded } = props;
+
+  // [...]
+
+  return (
+    <View style={styleField}>
+      {!mined && opened && nearMines > 0 
+      ? (<Text style={[styles.label, { color: color }]}>{nearMines}</Text>)
+      : (false)}
+
+      {mined && opened
+      ? (<Mine />)
+      : (false)}
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- E além das propriedades _mined_, _opened_, _nearMines_ e _exploded_ vamos também esperar receber via props o _flagged_ para saber se o campo está marcado com uma bandeira.
+E iremos realizar a verificação se _flagged_ foi passado como props para o campo, se verdadeiro iremos empurrar o estilo _flagged_ para o array de estilos _styleField_:
+
+``` JSX 
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Mine from "./Mine";
+import Flag from "./Flag";
+
+const Field = (props) => {
+  const { mined, opened, nearMines, exploded, flagged } = props;
+
+  const styleField = [styles.field];
+  if (opened) styleField.push(styles.opened);
+  if (exploded) styleField.push(styles.exploded);
+  if (flagged) styleField.push(styles.flagged);
+  if (styleField.length === 1) styleField.push(styles.regular);
+
+  // [...]
+
+  return (
+    <View style={styleField}>
+      {!mined && opened && nearMines > 0 
+      ? (<Text style={[styles.label, { color: color }]}>{nearMines}</Text>)
+      : (false)}
+
+      {mined && opened
+      ? (<Mine />)
+      : (false)}
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- Também iremos realizar uma alteração na lógica para aplicar o estilo _regular_ quando o campo receber a propriedade _flagged_(o campo "bandeirado" por padrão vai precisar estar fechado), ou seja, quando não receber _!opened_ e(&&) _!exploded_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Mine from "./Mine";
+import Flag from "./Flag";
+
+const Field = (props) => {
+  const { mined, opened, nearMines, exploded, flagged } = props;
+
+  const styleField = [styles.field];
+  if (opened) styleField.push(styles.opened);
+  if (exploded) styleField.push(styles.exploded);
+  if (flagged) styleField.push(styles.flagged);
+  if (!opened && !exploded) styleField.push(styles.regular);
+
+  // [...]
+
+  return (
+    <View style={styleField}>
+      {!mined && opened && nearMines > 0 
+      ? (<Text style={[styles.label, { color: color }]}>{nearMines}</Text>)
+      : (false)}
+
+      {mined && opened
+      ? (<Mine />)
+      : (false)}
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- E agora, iremos inserir uma renderização condicional para exibir ou não a Bandeira/_Flag_, pois só iremos exibir caso a prop _flagged_(compo está com bandeira) tenha sido passada para o Campo/_Field_ e(&&) campo não esteja aberdo, ou seja, _opened_ seja falso((_!opened_ ou seja, se for falso o ! vai tornar em true e vai passar na condição):
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Mine from "./Mine";
+import Flag from "./Flag";
+
+const Field = (props) => {
+  const { mined, opened, nearMines, exploded, flagged } = props;
+
+  const styleField = [styles.field];
+  if (opened) styleField.push(styles.opened);
+  if (exploded) styleField.push(styles.exploded);
+  if (flagged) styleField.push(styles.flagged);
+  if (!opened && !exploded) styleField.push(styles.regular);
+
+  let color = null;
+  if (nearMines > 0) {
+    if (nearMines === 1) color = "#2A28D7";
+    if (nearMines === 2) color = "#2B520F";
+    if (nearMines > 2 && nearMines < 6) color = "#F9060A";
+    if (nearMines >= 6) color = "#F221A9";
+  }
+
+  return (
+    <View style={styleField}>
+      {!mined && opened && nearMines > 0 
+      ? (<Text style={[styles.label, { color: color }]}>{nearMines}</Text>)
+      : (false)}
+
+      {mined && opened
+      ? (<Mine />)
+      : (false)}
+
+      {flagged && !opened
+      ? (<Flag />)
+      : (false)}
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [..]
+});
+
+export default Field;
+```
+
+- Agora, voltando no componente _App_ vamos exibir o componente Campo/_Field_ passando _flagged_(marcado com a bandeira):
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Field from "../components/Field";
+
+export default class App extends Component {
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>Iniciando o Minefield</Text>
+        <Text>Tamanho da grade: 
+          {params.getRowsAmount()}x{params.getColumnsAmount()}</Text>
+          
+        <Field />
+        <Field opened />
+        <Field opened nearMines={1} />
+        <Field opened nearMines={2} />
+        <Field opened nearMines={3} />
+        <Field opened nearMines={4} />
+        <Field opened nearMines={5} />
+        <Field opened nearMines={6} />
+        <Field opened nearMines={7} />
+        <Field opened nearMines={8} />
+        <Field mined />
+        <Field mined opened />
+        <Field mined opened exploded/>
+        <Field flagged />
+        <Field flagged opened /> 
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+})
+```
 
 ## Criando APK
 
