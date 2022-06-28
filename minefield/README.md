@@ -1481,6 +1481,278 @@ const styles = StyleSheet.create({
 export default Flag;
 ```
 
+## Lógica do Jogo #01
+
+- Vamos criar um arquivo em que ele irá conter várias funções com a lógica do jogo, para deixar tudo mais organizado. 
+Dentro de src vamos criar um arquivo chamado lógica/_logic_. 
+E dentro dele, iremos criar três funções: a primeira função que vai ser responsável por criar o tabuleiro/_board_; a segunda será responsável por espalhar as minas dentro do tabuleiro; e a última irá chamar tanto a função que criou o tabuleiro/_board_ quanto a função que espalha as minas para criar o tabuleiro com as minas.
+
+- Vamos criar a função _createBoard_ a qual irá receber como parâmentro a quantidade de linhas/_rows_ e colunas/_columns_ que queremos nesse tabuleiro:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  
+}
+```
+
+- Em seguida, essa função vai retornar a criação de um _Array_ com o número de posições de acordo com o que foi passado no atributo _rows_, onde método _fill_ vai atribuir valores zerados a todas as posições desse array:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  return Array(rows).fill(0)
+}
+```
+
+- E com isso, vamos conseguir utilizar o método _map_ para percorrer todas as posições desse Array criado. Onde vamos ignorar o primeiro atributo, que nesse caso é o próprio elemento, como ele é zero, vamos ignorar colocando o simbolo underline; e vamos pegar o segundo atributo que é o indice de cada elemento que iremos percorrer, o qual iremos chamar de _row_:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  return Array(rows).fill(0).map((_, row) => )
+}
+```
+
+- E para finalizar o _map_ nesse primeiro array vamos passar a função callback para ele o qual irá repetir todo esse processo só que criando um Array com o número de _columns_ passada como atributo para a função:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  return Array(rows).fill(0).map((_, row) => {
+    return Array(columns).fill(0).map((_, column) => {
+      
+    })
+  })
+}
+```
+
+- E na função callback desse segundo _map_ iremos retornar um objeto com os atributos _row_(esse atributo vai receber o valor de _row_ que capturamos através do map) e _column_(esse atributo vai receber o valor de _column_ que capturamos através do map):
+
+``` JSX
+const createBoard = (rows, columns) => {
+  return Array(rows).fill(0).map((_, row) => {
+    return Array(columns).fill(0).map((_, column) => {
+      return {
+        row, // mesmo que row: row(chave: valor), mas como ambos tem o mesmo nome podemos usar a forma simplificada 
+        column, // mesmo que column: column(chave: valor), mas como ambos tem o mesmo nome podemos usar a forma simplificada 
+      }
+    })
+  })
+}
+```
+
+- Além disso, nesse objeto iremos ter o demais atributos: aberto/_opened_, marcação de bandeira/_flagged_, minado/_mined_ e se explodiu/_exploded_ todos recebendo o valor booleano false/_false_. Além disso, a quantidade de minas/_nearMines_ iniciando com 0:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  return Array(rows).fill(0).map((_, row) => {
+    return Array(columns).fill(0).map((_, column) => {
+      return {
+        row,
+        column, 
+        opened: false,
+        flagged: false,
+        mined: false,
+        exploded: false,
+        nearMines: 0
+      }
+    })
+  })
+}
+```
+
+- Tudo isso porque, esse é um objeto que vai está associado com cada um dos campos do campo minado, e a partir dessa matriz(array de arrays) que vai conter vários objetos(com número da linha que ele tá, número da coluna, se tá aberto...) vamos saber os dados de cada campo.
+
+- Em seguida, vamos criar a segunda função espalhar minas/_spreadMines_ e ela irá receber os atributos tabuleiro/_board_ que foi criado a partir da função _createBoard_ e a quantidade de minas/_minesAmount_ que queremos espalhar usando essaf função:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  // [...]
+}
+
+const spreadMines = (board, minesAmount) => {
+  
+
+}
+```
+
+- E dentro da função vamos pegar a quantidade de linhas e colunas de acordo com o tabuleiro criado:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  // [...]
+}
+
+const spreadMines = (board, minesAmount) => {
+  const rows = board.length;
+  const column = board[0].length; // dentro de um dos arrays do board temos o tamanho de colunas
+}
+```
+
+- Vamos pegar também a quantidade de minas plantadas/_minesPlanted_ iniciando com 0:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  // [...]
+}
+
+const spreadMines = (board, minesAmount) => {
+  const rows = board.length;
+  const column = board[0].length; 
+  let minesPlanted = 0;
+}
+```
+
+- O próximo passo é fazer um _while_ que irá testar enquanto a quantidade de minas plantadas/_minesPlanted_ for menor que a quantidade de minas que queremos espalhar dentro do campo/_minesAmount_ continue:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  // [...]
+}
+
+const spreadMines = (board, minesAmount) => {
+  const rows = board.length;
+  const column = board[0].length; 
+  let minesPlanted = 0;
+
+  while (minesPlanted < minesAmount) {
+    
+  }
+}
+```
+
+- Dentro do _while_ vamos precisar selecionar qual é a linha e coluna que queremos plantar a mina, e para isso vamos usar o _Math.random_ para "sortear".
+A constante linha selecionada/_rowSel_ vai receber um _parseInt_(para converter o resultado em número inteiro) "em cima" de _Math.random_ multiplicado pelas linhas/_rows_(para gerar um valor o qual o valor máximo será o número de linhas) na base 10:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  // [...]
+}
+
+const spreadMines = (board, minesAmount) => {
+  const rows = board.length;
+  const column = board[0].length; 
+  let minesPlanted = 0;
+
+  while (minesPlanted < minesAmount) {
+    const rowSel = parseInt(Math.random() * rows, 10);
+    
+  }
+}
+```
+
+- E o mesmo iremos fazer para selecionar uma coluna:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  // [...]
+}
+
+const spreadMines = (board, minesAmount) => {
+  const rows = board.length;
+  const column = board[0].length; 
+  let minesPlanted = 0;
+
+  while (minesPlanted < minesAmount) {
+    const rowSel = parseInt(Math.random() * rows, 10);
+    const columnSel = parseInt(Math.random() * column, 10);
+  }
+}
+```
+
+- Em seguida, iremos verificar se já há uma mina dentro do campo selecionado(de acordo com a linha/_rowSel_ e coluna/_columnSel_ sorteadas) e se passar aí sim iremos "plantar" a bomba:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  // [...]
+}
+
+const spreadMines = (board, minesAmount) => {
+  const rows = board.length;
+  const column = board[0].length; 
+  let minesPlanted = 0;
+
+  while (minesPlanted < minesAmount) {
+    const rowSel = parseInt(Math.random() * rows, 10);
+    const columnSel = parseInt(Math.random() * column, 10);
+
+    if (!board[rowSel][columnSel].mined) { // o campo não está minado
+      board[rowSel][columnSel].mined = true; // aí sim plantamos a bomba nesse campo
+    }
+  }
+}
+```
+
+- Feito isso, por fim, iremos criar a função _createMinedBoard_ que irá criar o tabuleiro com as minas plantadas.
+Essa função, irá receber como atributos a quantidade de linhas/_rows_, de colunas/_columns_ e e de minas que queremos plantar/_minesAmount_:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  // [...]
+}
+
+const spreadMines = (board, minesAmount) => {
+  // [...]
+  }
+}
+
+const createMinedBoard = (rows, columns, minesAmount) => {
+
+}
+```
+
+- E dentro dessa função iremos criar o tabuleiro/_board_ chamando a função _creatBoard_ passando o número de linhas/_rows_ e colunas/_columns_ para ela:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  // [...]
+}
+
+const spreadMines = (board, minesAmount) => {
+  // [...]
+}
+
+const createMinedBoard = (rows, columns, minesAmount) => {
+  const board = createBoard(rows, columns);
+}
+```
+
+- Em seguida, iremos chamar a função para espalhar as minas/_spreadMines_ e iremos passar como parâmetro para ela o tabuleiro que criamos/_board_ e o número de minas/_minesAmount_ que queremos espalhar pelo tabuleiro:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  // [...]
+}
+
+const spreadMines = (board, minesAmount) => {
+  // [...]
+}
+
+const createMinedBoard = (rows, columns, minesAmount) => {
+  const board = createBoard(rows, columns);
+  spreadMines(board, minesAmount);
+}
+```
+
+- Por fim, iremos retornar o tabuleiro/_board_ já com as minas plantadas e para que seja possível usar essa função _createMinedBoard_ fora do seu arquivo vamos exportá-la:
+
+``` JSX
+const createBoard = (rows, columns) => {
+  // [...]
+}
+
+const spreadMines = (board, minesAmount) => {
+  // [...]
+}
+
+const createMinedBoard = (rows, columns, minesAmount) => {
+  const board = createBoard(rows, columns);
+  spreadMines(board, minesAmount);
+  return board;
+}
+
+export { createMinedBoard };
+```
+
+## Componente Tabuleiro/MineField 
+
 - 
 
 ## Criando APK
