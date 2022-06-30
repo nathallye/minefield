@@ -25,6 +25,7 @@ const spreadMines = (board, minesAmount) => {
 
     if (!board[rowSel][columnSel].mined) { // o campo não está minado
       board[rowSel][columnSel].mined = true;
+      minesPlanted += 1;
     }
   }
 }

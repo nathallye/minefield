@@ -1657,7 +1657,7 @@ const spreadMines = (board, minesAmount) => {
 }
 ```
 
-- Em seguida, iremos verificar se já há uma mina dentro do campo selecionado(de acordo com a linha/_rowSel_ e coluna/_columnSel_ sorteadas) e se passar aí sim iremos "plantar" a bomba:
+- Em seguida, iremos verificar se já há uma mina dentro do campo selecionado(de acordo com a linha/_rowSel_ e coluna/_columnSel_ sorteadas) e se passar aí sim iremos "plantar" a bomba e incrementar + 1 no numero de minas plantadas/_minesPlanted_:
 
 ``` JSX
 const createBoard = (rows, columns) => {
@@ -1675,6 +1675,7 @@ const spreadMines = (board, minesAmount) => {
 
     if (!board[rowSel][columnSel].mined) { // o campo não está minado
       board[rowSel][columnSel].mined = true; // aí sim plantamos a bomba nesse campo
+      minesPlanted += 1;
     }
   }
 }
@@ -1753,7 +1754,472 @@ export { createMinedBoard };
 
 ## Componente Tabuleiro/MineField 
 
-- 
+- Dentro de src/components vamos criar o componente funcional _MineField_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import Field from "./Field";
+
+const MineField = (props) => {
+  return (
+    <View>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+
+});
+
+export default MineField;
+```
+
+- Vamos uma constante chamada linhas/_rows_ que esperar receber via props o tabuleiro/_board_ e nele vamos utilizar o método _map_ o qual irá pegar o elemento/_row_ e o indice/_r_ de cada elemento e a função callback desse map vai receber a const colunas/_columns_ que vai receber _row.map_ qiue vai pecorrer cada campo/_field_ e o seu indice/_c_, ou seja, dentro das linhas vamos ter os campos:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import Field from "./Field";
+
+const MineField = (props) => {
+  const rows = props.board.map((row, r) => {
+    const columns = row.map((field, c) => {
+      
+    })
+  })
+
+  return (
+    <View>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+
+});
+
+export default MineField;
+```
+
+- E na função callback do segundo _map_ vamos transformar cada campo/_field_ em um componente JSX.
+Vamos retornar o componente _Field_ passando para ele via props o objeto _field_(tem todos os atributos -row, column, opened, flagged, mined- que passamos no arquivo logic para ele na função _creatBoard_).
+E também o atributo key passando como valor o indice/_c_ de cada _field_, pois sempre que retornamos um array de elementos JSX, a chave é importante:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import Field from "./Field";
+
+const MineField = (props) => {
+  const rows = props.board.map((row, r) => {
+    const columns = row.map((field, c) => {
+      return <Field {...field} key={c} />
+    })
+  })
+
+  return (
+    <View>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+
+});
+
+export default MineField;
+```
+
+- Uma vez que a const _columns_ armazena todos os campos/_fields_ de uma linha/_row_, podemos retornar uma _View_ que vai encapsular todas os campos/colunas/_fields_ de uma mesma linha:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import Field from "./Field";
+
+const MineField = (props) => {
+  const rows = props.board.map((row, r) => {
+    const columns = row.map((field, c) => {
+      return <Field {...field} key={c} />
+    })
+    return <View key={r}>{columns}</View>
+  })
+
+  return (
+    <View>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+
+});
+
+export default MineField;
+```
+
+- Agora, no retorno da _View_ do componente _MineField_ vamos encapsular essa constante _rows_ criada acima.
+Aplicando e criando o objeto de estilo _container_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import Field from "./Field";
+
+const MineField = (props) => {
+  const rows = props.board.map((row, r) => { // percorre as linhas do board
+    const columns = row.map((field, c) => { // percorre as colunas de cada linha do board, que já são os próprios campos
+      return <Field {...field} key={c} />
+    })
+    return <View key={r}>{columns}</View>
+  })
+
+  return (
+    
+
+
+  container: {
+    backgroundColor: "#EEE",
+    flexDirection: "row", // por padrão o flex direction do RN é a coluna/column
+  } 
+});
+
+export default MineField;
+```
+
+- Salvando o _MineField_ temos o componente pronto e agora vamos precisar usá-lo dentro do componente _App_. 
+Olhando para o componente _MineField_ pronto, notamos que precisamos passar algumas informações para ele funcionar, que no caso é o tabuleiro/_board_ e para criar o _board_ (através da função _createBoard_) precisamos fornecer três dados: quantidade delinhas/_rows_, quantidade de colunas/_columns_ e o número de minas que queremos espalhar no tabuleiro/_minesAmount_. 
+Se olharmos, já temos essas informações da quantidade de _rows_ e _columns_ a partir dos métodos criados(_getColumnsAmount()_ e _getRowsAmount()_) e a quantidade de minas a partir do percentual de difuculdade passado/_difficultLevel_ dentro do arquivo _params_.
+E esse trabalho de pegar esses valores de _params_, calcular e chamar o componente _MineField_ vai acontecer dentro do componente _App_.
+
+- Para isso, dentro do componente _App_ vamos importar o _MinedField_ e a função responsável por criar o tabuleiro/_createMinedBoard_ de dentro do arquivo _logic_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Field from "../components/Field";
+import MineField from "../components/MineField";
+
+import { 
+  createMineBoard 
+} from "../params";
+
+export default class App extends Component {
+  render() {
+    return (
+      // [...]
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+  // [...]
+})
+```
+
+- Agora, vamos criar duas funções. 
+A primeira função _minesAmount_ vai ser responsável por calcular a quantidade de minas que estará presente no tabuleiro, ela vai conter uma const chamada _rows_ que vai receber o método _getRowsAmount()_(que calcula a quantidade de rows a partir do modelo do aparelho) de dentro de _params_ e outra const chamada _columns_ que vai receber o método _getColumnsAmount()_(que calcula a quantidade de columns a partir do modelo do aparelho) de dentro de _params_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Field from "../components/Field";
+import MineField from "../components/MineField";
+
+import { 
+  createMineBoard 
+} from "../params";
+
+export default class App extends Component {
+
+  minesAmount = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+  }
+
+  render() {
+    return (
+      // [...]
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+})
+```
+
+- E para calcular a quantidade de minas a serem espalhadas nesse tabuleiro, vamos retornar/_return_ através do método _Math.ceil_ a multiplicação do número de linhas/_rows_ e colunas/_columns_(que vai dá exatamente a quantidade de campos) pelo percentual de dificuldade/_difficultLevel_ diretamente de _params_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Field from "../components/Field";
+import MineField from "../components/MineField";
+
+import { 
+  createMineBoard 
+} from "../params";
+
+export default class App extends Component {
+
+  minesAmount = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return Math.ceil(rows * columns * params.difficultLevel);
+  }
+
+  render() {
+    return (
+      // [...]
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+})
+```
+
+- E a segunda função _createState_ será responsável pelo estado do componente.
+Dentro dessa função, assim como a anterior teremos constantes com a quantidade de linhas/_rows_ e colunas/_columns_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Field from "../components/Field";
+import MineField from "../components/MineField";
+
+import { 
+  createMineBoard 
+} from "../params";
+
+export default class App extends Component {
+
+  minesAmount = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return Math.ceil(rows * columns * params.difficultLevel);
+  }
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+  }
+
+  render() {
+    return (
+      // [...]
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Em seguida, essa função vai retornar/_return_ um objeto, que por enquanto ele vai conter um único atributo que vai ser o tabuleiro/_board_(matriz composta pelos objetos com o estado de cada um dos campos do jogo -row, column, opened, flagged, mined, exploded, nearMines-). Dentro do atributo iremos chamar a função que irá criar o tabuleiro/_createMinedBoard_ passando para ela o número de linhas/_rows_, número de colunas/_columns_ e o número de minas que o valor calculado é retornado através da função _minesAmount()_ :
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Field from "../components/Field";
+import MineField from "../components/MineField";
+
+import { 
+  createMineBoard 
+} from "../params";
+
+export default class App extends Component {
+
+  minesAmount = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return Math.ceil(rows * columns * params.difficultLevel);
+  }
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMineBoard(rows, columns, this.minesAmount()),
+    }
+  }
+
+  render() {
+    return (
+      // [...]
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Dando continuidade, vamos criar o construtor chamar o resultado da função que cria o estado _this.createState()_ a partir _this.state_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import Field from "../components/Field";
+import MineField from "../components/MineField";
+
+import { 
+  createMinedBoard 
+} from "../params";
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = this.createState()
+  }
+
+  minesAmount = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return Math.ceil(rows * columns * params.difficultLevel);
+  }
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount())
+    }
+  }
+
+  render() {
+    return (
+      // [...]
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Agora, vamos remover as referências ao componente _Field_, e no lugar vamos inserir uma nova _View_ e dentro dela vamos inserir o componente _MineField_ e vamos enviar via props para o atributo _board_ o objeto _this.state.board_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import params from "../params";
+
+import MineField from "../components/MineField";
+
+import { 
+  createMinedBoard 
+} from "../logic";
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = this.createState()
+  }
+
+  minesAmount = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return Math.ceil(rows * columns * params.difficultLevel);
+  }
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount())
+    }
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>Iniciando o Minefield</Text>
+        <Text>Tamanho da grade: 
+          {params.getRowsAmount()}x{params.getColumnsAmount()}</Text>
+          
+        <View style={styles.board}>
+          <MineField board={this.state.board}/>
+        </View>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- E vamos limpar os estilos anteriores e criar algo mais enxuto, já que não estamos mais usando o _Field_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import Field from "./Field";
+
+const MineField = (props) => {
+  console.log(props)
+  const rows = props.board.map((row, r) => {
+    const columns = row.map((field, c) => {
+      return <Field {...field} key={c} />
+    })
+    return <View 
+      key={r}
+      style={{flexDirection: "row"}}>{columns}</View> // flexDirection: "row" por padrão o flex direction do RN é a coluna/column, e para organizar direitinho os campos em linha vamos aplicar essa propriedade
+  })
+
+  return (
+    <View style={styles.container}>{rows}</View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#EEE",
+  } 
+});
+
+export default MineField;
+```
 
 ## Criando APK
 

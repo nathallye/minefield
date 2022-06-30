@@ -3,31 +3,44 @@ import { StyleSheet, View, Text } from "react-native";
 
 import params from "../params";
 
-import Field from "../components/Field";
+import MineField from "../components/MineField";
+
+import { 
+  createMinedBoard 
+} from "../logic";
 
 export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = this.createState()
+  }
+
+  minesAmount = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return Math.ceil(rows * columns * params.difficultLevel);
+  }
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+    }
+  }
+
   render() {
+    console.log(this.createState)
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Iniciando o Minefield</Text>
+        <Text>Iniciando o Minefield</Text>
         <Text>Tamanho da grade: 
           {params.getRowsAmount()}x{params.getColumnsAmount()}</Text>
           
-        <Field />
-        <Field opened />
-        <Field opened nearMines={1} />
-        <Field opened nearMines={2} />
-        <Field opened nearMines={3} />
-        <Field opened nearMines={4} />
-        <Field opened nearMines={5} />
-        <Field opened nearMines={6} />
-        <Field opened nearMines={7} />
-        <Field opened nearMines={8} />
-        <Field mined />
-        <Field mined opened />
-        <Field mined opened exploded/>
-        <Field flagged />
-        <Field flagged opened /> 
+        <View style={styles.board}>
+          <MineField board={this.state.board} />
+        </View>
       </View>
     );
   }
@@ -35,15 +48,11 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#f5fcff",
-
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-end",
   },
-  welcome: {
-    textAlign: "center",
-
-    fontSize: 20,
+  board: {
+    backgroundColor: "#AAA",
+    alignItems: "center",
   }
-})
+});
