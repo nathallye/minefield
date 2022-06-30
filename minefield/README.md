@@ -2221,6 +2221,12 @@ const styles = StyleSheet.create({
 export default MineField;
 ```
 
+## Lógica do Jogo #02
+
+- A partir de determinado campo, precisamos descobrir seus vizinhos e para isso vamos pegar a linha do elemento, subtrair um para pegar o elemento da frente e somar um para pegar o elemento de trás, por exemplo linha 3 fica assim [2, 3, 4] e o mesmo será feito para a coluna, e juntando tudo dá nove pares ou seja, 8 vizinhos.
+
+- 
+
 ## Criando APK
 
 ### Gerando uma Chave de Upload
