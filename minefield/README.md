@@ -2225,7 +2225,178 @@ export default MineField;
 
 - A partir de determinado campo, precisamos descobrir seus vizinhos e para isso vamos pegar a linha do elemento, subtrair um para pegar o elemento da frente e somar um para pegar o elemento de trás, por exemplo linha 3 fica assim [2, 3, 4] e o mesmo será feito para a coluna, e juntando tudo dá nove pares ou seja, 8 vizinhos.
 
-- 
+- Vamos voltar para o arquivo _logic_ e por enquanto nele temos apenas uma única função sendo exportada, que é a função que cria um tabuleiro minado/_createMinedBoard_.
+Agora, vamos compementar esse arquvio com outras funções que dizem respeito a lógica do jogo.
+
+- Primeiro vamos criar uma função que é responsável por clonar um tabuleiro/_cloneBoard_, essa função vai receber como parâmetro um tabuleiro/_board_ e vamos gerar um clone a partir dele. E para fazer isso, vamos fazer um _map_ emcima do _board_ que irá percorrer as linhas/_rows_ e em cima delas vamos fazer um novo _map_ o que irá percorrer cada campo/_field_ e para cada compo/_field_ iremos retornar um novo objeto usando o operador _spreed_ para clonar o campo/_field_:
+
+``` JSX
+// [...]
+
+const cloneBoard = (board) => {
+  return board.map(rows => {
+    return rows.map(field => {
+      return { ... field };
+    })
+  })
+}
+
+export { createMinedBoard };
+```
+
+É importante clonar o tabuleiro/_board_, pois sempre que vamos mecher no estado de um componente usando React não mechemos diretamente na referência do objeto e sim vamos gerando novos objetos, que é a evolução do estado. E vamos chegar na situação que vários componentes vão referênciar determinado dado(estado compartilhado entre multiplos componentes) e mudar o estado de um componente pode gerar um impacto em outro que não queremos, então usar princípios funcionais é interesante para que tenha um desaclopamento maior do dado.
+
+- Em seguida, vamos criar a função que vai "pegar" os vizinhos/_getNeighbors_, e essa função irá receber o tabuleiro/_board_, além da linha/_row_ e a coluna/_column_ onde está localizado o campo que queremos verificar a vizinhança:
+
+``` JSX
+// [...]
+
+const getNeighbors = (board, row, column) => {
+  
+}
+
+export { createMinedBoard };
+```
+
+- Dentro dessa função, iremos criar a const vizinhos/_neighbords_ que irá receber um array vazio.
+Também iremos criar a const linhas/_rows_ que vai receber um array com as linhas dos possivéis vizinhos(para descobrir os vizinhos vamos pegar a linha do elemento, subtrair um para pegar o elemento da frente e somar um para pegar o elemento de trás):
+
+``` JSX
+// [...]
+
+const getNeighbors = (board, row, column) => {
+  const neighbors = [];
+  const rows = [row - 1, row, row + 1];
+}
+
+export { createMinedBoard };
+```
+
+- E iremos fazer a mesma coisa para pegar as colunas/_columns_:
+
+``` JSX
+// [...]
+
+const getNeighbors = (board, row, column) => {
+  const neighbors = [];
+  const rows = [row - 1, row, row + 1];
+  const columns = [column - 1, column, column + 1];
+}
+
+export { createMinedBoard };
+```
+
+- Dessa forma, temos 9 possibilidades de vizinhos, então temos que excluir o próprio nó/campo e os que estão fora dos limites da matriz.
+Para isso, vamos fazer um _forEach_ "em cima" das linhas/_rows_ para percorrer cada linha/_row_ e em cada linha vamos fazer outro _forEach_ nas colunas/_coluns_ e desse modo vamos acessar cada campo. E para cada campo vamos fazer alguns testes:
+
+``` JSX
+// [...]
+
+const getNeighbors = (board, row, column) => {
+  const neighbors = [];
+  const rows = [row - 1, row, row + 1];
+  const columns = [column - 1, column, column + 1];
+  
+  rows.forEach(r => {
+    columns.forEach(c => {
+      
+    })
+  })
+}
+
+export { createMinedBoard };
+```
+
+- Vamos criar uma const _diferent_ a qual irá receber um valor booleano de acordo com a verificação da condição: se _r_ for diferente(!==) da _row_ passada no parâmetro da função ou(||) _c_ for diferente da _column_ passada como parâmetro da função o valor vai ser _true_(se pelo menos um dos dois forem direntes significa que não estamos tratando do campo em questão), senão recebe _false_:
+
+``` JSX
+// [...]
+
+const getNeighbors = (board, row, column) => {
+  const neighbors = [];
+  const rows = [row - 1, row, row + 1];
+  const columns = [column - 1, column, column + 1];
+  
+  rows.forEach(r => {
+    columns.forEach(c => {
+      const diferent = r !== row || c !== column;
+    })
+  })
+}
+
+export { createMinedBoard };
+```
+
+- A outra validação vai ser para sabermos se temos um linha válida. E para isso, vamos criar uma constante chamada _validRow_ a qual irá receber um valor booleano de acordo com a verificação da condição: _r_ maior ou igual a(>=) _0_ e(&&) _r_ ser menor(<) do que o tamanho do tabuleiro/_board.length_:
+
+``` JSX
+// [...]
+
+const getNeighbors = (board, row, column) => {
+  const neighbors = [];
+  const rows = [row - 1, row, row + 1];
+  const columns = [column - 1, column, column + 1];
+  
+  rows.forEach(r => {
+    columns.forEach(c => {
+      const diferent = r !== row || c !== column;
+      const validRow = r >= 0 && r < board.length;
+    })
+  })
+}
+
+export { createMinedBoard };
+```
+
+- E iremos seguir a mesma lógica para verificar se temos uma coluna/_column_ válida:
+
+``` JSX
+// [...]
+
+const getNeighbors = (board, row, column) => {
+  const neighbors = [];
+  const rows = [row - 1, row, row + 1];
+  const columns = [column - 1, column, column + 1];
+  
+  rows.forEach(r => {
+    columns.forEach(c => {
+      const diferent = r !== row || c !== column;
+      const validRow = r >= 0 && r < board.length;
+      const validColumn = c >= 0 && c < board[0].length; // pegando o tamanho da primeira linha temos a quantidade de colunas
+    })
+  })
+}
+
+export { createMinedBoard };
+```
+
+- Em seguida, vamos verificar se/_if_ se todas as constantes/condicionais são verdadeiras/_true_ significa que podemos adicionar/empurrar/_push_ o campo/_board_ em questão ao array de vizinhos/_neighbors_.
+E no final da função vamos retornar esse array de vizinhos/_neighbors_ como resultado:
+
+``` JSX
+// [...]
+
+const getNeighbors = (board, row, column) => {
+  const neighbors = [];
+  const rows = [row - 1, row, row + 1];
+  const columns = [column - 1, column, column + 1];
+  
+  rows.forEach(r => {
+    columns.forEach(c => {
+      const diferent = r !== row || c !== column;
+      const validRow = r >= 0 && r < board.length;
+      const validColumn = c >= 0 && c < board[0].length; // pegando o tamanho da primeira linha temos a quantidade de colunas
+
+      if (diferent && validRow && validColumn) {
+        neighbors.push(board[r][c]);
+      }
+    })
+  })
+  return neighbors;
+}
+
+export { createMinedBoard };
+```
 
 ## Criando APK
 
