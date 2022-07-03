@@ -2246,7 +2246,7 @@ export { createMinedBoard };
 
 É importante clonar o tabuleiro/_board_, pois sempre que vamos mecher no estado de um componente usando React não mechemos diretamente na referência do objeto e sim vamos gerando novos objetos, que é a evolução do estado. E vamos chegar na situação que vários componentes vão referênciar determinado dado(estado compartilhado entre multiplos componentes) e mudar o estado de um componente pode gerar um impacto em outro que não queremos, então usar princípios funcionais é interesante para que tenha um desaclopamento maior do dado.
 
-- Em seguida, vamos criar a função que vai "pegar" os vizinhos/_getNeighbors_, e essa função irá receber o tabuleiro/_board_, além da linha/_row_ e a coluna/_column_ onde está localizado o campo que queremos verificar a vizinhança:
+- Em seguida, vamos criar a função que vai "pegar" os vizinhos/_getNeighbors_, e essa função irá receber o tabuleiro/_board_, além disso, irá receber a linha/_row_ e a coluna/_column_ onde está localizado o campo que queremos verificar a vizinhança:
 
 ``` JSX
 // [...]
@@ -2385,7 +2385,7 @@ const getNeighbors = (board, row, column) => {
     columns.forEach(c => {
       const diferent = r !== row || c !== column;
       const validRow = r >= 0 && r < board.length;
-      const validColumn = c >= 0 && c < board[0].length; // pegando o tamanho da primeira linha temos a quantidade de colunas
+      const validColumn = c >= 0 && c < board[0].length; 
 
       if (diferent && validRow && validColumn) {
         neighbors.push(board[r][c]);
@@ -2393,6 +2393,58 @@ const getNeighbors = (board, row, column) => {
     })
   })
   return neighbors;
+}
+
+export { createMinedBoard };
+```
+
+- A próxima função que vamos criar é para saber se a vizinhança é segura/_safeNeighborhood_, e essa função irá receber o tabuleiro/_board_, além disso disso, irá receber linha/_row_ e a coluna/_column_ onde está localizado o campo que queremos verificar se a vizinhança é segura:
+
+``` JSX
+// [...]
+
+const safeNeighborhood = (board, row, column) => {
+  
+}
+
+export { createMinedBoard };
+```
+
+- E uma vez que temos a linha e a coluna, conseguimos encontrar os vizinhos e "em cima" dos vizinhos vamos verificar se eles tem ou não tem mina. E para isso vamos criar uma função que ela vai ser responsável por usar o método _reduce_ para calcular e saber se determinada vizinhanção é segura ou não.
+Vamos criar uma função chamada segura/_safes_ e ela vai receber como parâmetro o resultado/_result_ que vai ser um totalizador e o vizinho atual/_neighbor_ que estamos percorrendo dentro do reduce:
+
+``` JSX
+// [...]
+
+const safeNeighborhood = (board, row, column) => {
+  const safes = (result, neighbor) => 
+}
+
+export { createMinedBoard };
+```
+
+- E essa função vai pegar o resultado e vai fazer a lógica para verificar se o vizinho não está minado/_!neighbor.mined_. Se o vizinho não estiver minado o resultado é _true_ e vai ser feita uma operação de e(&&), vai pegar o resultado atual/_result_ e o resultado se o vizinho não está minado, de tal forma se um dos vizinhos que forem verificados estiver minado todo resultado de _safes_ vai ser _false_, ou seja, não é seguro(tudo isso usando a lógica do reduce, que serve para iterar sobre um array e utilizar o valor de cada item para criar um objeto final com base em alguma regra. Como o próprio nome sugere, ela “reduz” os itens de um vetor a um valor único.):
+
+``` JSX
+// [...]
+
+const safeNeighborhood = (board, row, column) => {
+  const safes = (result, neighbor) => result && !neighbor.mined; 
+}
+
+export { createMinedBoard };
+```
+
+- E por fim, para sabermos de forma efetiva se a vizinha é segura... 
+Na função _safeNeighborhood_ vamos chamar a função de pegar os vizinhos/_getNeighbord_, e vamos passar o tabuleiro/_board_, além de passarmos a linha/_row_ e a coluna/_column_ do campo em questão. Em seguida, vamos chamar a função _reduce_ passando como função callback _safes_ e o valor inicial como _true_. 
+Desse modo, o valor retornado nessa função _safeNeighborhood_ vai  dizer se a vizinhança de um determiando nó/campo é segura(_true_) ou não(_false_):
+
+``` JSX
+// [...]
+
+const safeNeighborhood = (board, row, column) => {
+  const safes = (result, neighbor) => result && !neighbor.mined; 
+  return getNeighbors(board, row, column).reduce(safes, true);
 }
 
 export { createMinedBoard };
