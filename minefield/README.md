@@ -2720,7 +2720,7 @@ E essa função vai se chamar exibir minas/_showMines_ ela irá receber como par
 
 ``` JSX
 const showMines = (board) => {
-  return fields(board).filter(field => field.mined)
+  fields(board).filter(field => field.mined)
 }
 
 export { createMinedBoard };
@@ -2730,7 +2730,7 @@ export { createMinedBoard };
 
 ``` JSX
 const showMines = (board) => {
-  return fields(board).filter(field => field.mined)
+  fields(board).filter(field => field.mined)
     .forEach(field => field.opened = true);
 }
 
@@ -2743,7 +2743,7 @@ export { createMinedBoard };
 // [...]
 
 const showMines = (board) => {
-  return fields(board).filter(field => field.mined)
+  fields(board).filter(field => field.mined)
     .forEach(field => field.opened = true);
 }
 
