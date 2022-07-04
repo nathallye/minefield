@@ -1489,7 +1489,7 @@ E dentro dele, iremos criar três funções: a primeira função que vai ser res
 
 - Vamos criar a função _createBoard_ a qual irá receber como parâmentro a quantidade de linhas/_rows_ e colunas/_columns_ que queremos nesse tabuleiro:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   
 }
@@ -1497,7 +1497,7 @@ const createBoard = (rows, columns) => {
 
 - Em seguida, essa função vai retornar a criação de um _Array_ com o número de posições de acordo com o que foi passado no atributo _rows_, onde método _fill_ vai atribuir valores zerados a todas as posições desse array:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   return Array(rows).fill(0)
 }
@@ -1505,7 +1505,7 @@ const createBoard = (rows, columns) => {
 
 - E com isso, vamos conseguir utilizar o método _map_ para percorrer todas as posições desse Array criado. Onde vamos ignorar o primeiro atributo, que nesse caso é o próprio elemento, como ele é zero, vamos ignorar colocando o simbolo underline; e vamos pegar o segundo atributo que é o indice de cada elemento que iremos percorrer, o qual iremos chamar de _row_:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   return Array(rows).fill(0).map((_, row) => )
 }
@@ -1513,7 +1513,7 @@ const createBoard = (rows, columns) => {
 
 - E para finalizar o _map_ nesse primeiro array vamos passar a função callback para ele o qual irá repetir todo esse processo só que criando um Array com o número de _columns_ passada como atributo para a função:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   return Array(rows).fill(0).map((_, row) => {
     return Array(columns).fill(0).map((_, column) => {
@@ -1525,7 +1525,7 @@ const createBoard = (rows, columns) => {
 
 - E na função callback desse segundo _map_ iremos retornar um objeto com os atributos _row_(esse atributo vai receber o valor de _row_ que capturamos através do map) e _column_(esse atributo vai receber o valor de _column_ que capturamos através do map):
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   return Array(rows).fill(0).map((_, row) => {
     return Array(columns).fill(0).map((_, column) => {
@@ -1540,7 +1540,7 @@ const createBoard = (rows, columns) => {
 
 - Além disso, nesse objeto iremos ter o demais atributos: aberto/_opened_, marcação de bandeira/_flagged_, minado/_mined_ e se explodiu/_exploded_ todos recebendo o valor booleano false/_false_. Além disso, a quantidade de minas/_nearMines_ iniciando com 0:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   return Array(rows).fill(0).map((_, row) => {
     return Array(columns).fill(0).map((_, column) => {
@@ -1562,7 +1562,7 @@ const createBoard = (rows, columns) => {
 
 - Em seguida, vamos criar a segunda função espalhar minas/_spreadMines_ e ela irá receber os atributos tabuleiro/_board_ que foi criado a partir da função _createBoard_ e a quantidade de minas/_minesAmount_ que queremos espalhar usando essaf função:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   // [...]
 }
@@ -1575,7 +1575,7 @@ const spreadMines = (board, minesAmount) => {
 
 - E dentro da função vamos pegar a quantidade de linhas e colunas de acordo com o tabuleiro criado:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   // [...]
 }
@@ -1588,7 +1588,7 @@ const spreadMines = (board, minesAmount) => {
 
 - Vamos pegar também a quantidade de minas plantadas/_minesPlanted_ iniciando com 0:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   // [...]
 }
@@ -1602,7 +1602,7 @@ const spreadMines = (board, minesAmount) => {
 
 - O próximo passo é fazer um _while_ que irá testar enquanto a quantidade de minas plantadas/_minesPlanted_ for menor que a quantidade de minas que queremos espalhar dentro do campo/_minesAmount_ continue:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   // [...]
 }
@@ -1621,7 +1621,7 @@ const spreadMines = (board, minesAmount) => {
 - Dentro do _while_ vamos precisar selecionar qual é a linha e coluna que queremos plantar a mina, e para isso vamos usar o _Math.random_ para "sortear".
 A constante linha selecionada/_rowSel_ vai receber um _parseInt_(para converter o resultado em número inteiro) "em cima" de _Math.random_ multiplicado pelas linhas/_rows_(para gerar um valor o qual o valor máximo será o número de linhas) na base 10:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   // [...]
 }
@@ -1640,7 +1640,7 @@ const spreadMines = (board, minesAmount) => {
 
 - E o mesmo iremos fazer para selecionar uma coluna:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   // [...]
 }
@@ -1659,7 +1659,7 @@ const spreadMines = (board, minesAmount) => {
 
 - Em seguida, iremos verificar se já há uma mina dentro do campo selecionado(de acordo com a linha/_rowSel_ e coluna/_columnSel_ sorteadas) e se passar aí sim iremos "plantar" a bomba e incrementar + 1 no numero de minas plantadas/_minesPlanted_:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   // [...]
 }
@@ -1684,7 +1684,7 @@ const spreadMines = (board, minesAmount) => {
 - Feito isso, por fim, iremos criar a função _createMinedBoard_ que irá criar o tabuleiro com as minas plantadas.
 Essa função, irá receber como atributos a quantidade de linhas/_rows_, de colunas/_columns_ e e de minas que queremos plantar/_minesAmount_:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   // [...]
 }
@@ -1701,7 +1701,7 @@ const createMinedBoard = (rows, columns, minesAmount) => {
 
 - E dentro dessa função iremos criar o tabuleiro/_board_ chamando a função _creatBoard_ passando o número de linhas/_rows_ e colunas/_columns_ para ela:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   // [...]
 }
@@ -1717,7 +1717,7 @@ const createMinedBoard = (rows, columns, minesAmount) => {
 
 - Em seguida, iremos chamar a função para espalhar as minas/_spreadMines_ e iremos passar como parâmetro para ela o tabuleiro que criamos/_board_ e o número de minas/_minesAmount_ que queremos espalhar pelo tabuleiro:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   // [...]
 }
@@ -1734,7 +1734,7 @@ const createMinedBoard = (rows, columns, minesAmount) => {
 
 - Por fim, iremos retornar o tabuleiro/_board_ já com as minas plantadas e para que seja possível usar essa função _createMinedBoard_ fora do seu arquivo vamos exportá-la:
 
-``` JSX
+``` JS
 const createBoard = (rows, columns) => {
   // [...]
 }
@@ -2230,7 +2230,7 @@ Agora, vamos compementar esse arquvio com outras funções que dizem respeito a 
 
 - Primeiro vamos criar uma função que é responsável por clonar um tabuleiro/_cloneBoard_, essa função vai receber como parâmetro um tabuleiro/_board_ e vamos gerar um clone a partir dele. E para fazer isso, vamos fazer um _map_ emcima do _board_ que irá percorrer as linhas/_rows_ e em cima delas vamos fazer um novo _map_ o que irá percorrer cada campo/_field_ e para cada compo/_field_ iremos retornar um novo objeto usando o operador _spreed_ para clonar o campo/_field_:
 
-``` JSX
+``` JS
 // [...]
 
 const cloneBoard = (board) => {
@@ -2248,7 +2248,7 @@ export { createMinedBoard };
 
 - Em seguida, vamos criar a função que vai "pegar" os vizinhos/_getNeighbors_, e essa função irá receber o tabuleiro/_board_, além disso, irá receber a linha/_row_ e a coluna/_column_ onde está localizado o campo que queremos verificar a vizinhança:
 
-``` JSX
+``` JS
 // [...]
 
 const getNeighbors = (board, row, column) => {
@@ -2261,7 +2261,7 @@ export { createMinedBoard };
 - Dentro dessa função, iremos criar a const vizinhos/_neighbords_ que irá receber um array vazio.
 Também iremos criar a const linhas/_rows_ que vai receber um array com as linhas dos possivéis vizinhos(para descobrir os vizinhos vamos pegar a linha do elemento, subtrair um para pegar o elemento da frente e somar um para pegar o elemento de trás):
 
-``` JSX
+``` JS
 // [...]
 
 const getNeighbors = (board, row, column) => {
@@ -2274,7 +2274,7 @@ export { createMinedBoard };
 
 - E iremos fazer a mesma coisa para pegar as colunas/_columns_:
 
-``` JSX
+``` JS
 // [...]
 
 const getNeighbors = (board, row, column) => {
@@ -2289,7 +2289,7 @@ export { createMinedBoard };
 - Dessa forma, temos 9 possibilidades de vizinhos, então temos que excluir o próprio nó/campo e os que estão fora dos limites da matriz.
 Para isso, vamos fazer um _forEach_ "em cima" das linhas/_rows_ para percorrer cada linha/_row_ e em cada linha vamos fazer outro _forEach_ nas colunas/_coluns_ e desse modo vamos acessar cada campo. E para cada campo vamos fazer alguns testes:
 
-``` JSX
+``` JS
 // [...]
 
 const getNeighbors = (board, row, column) => {
@@ -2309,7 +2309,7 @@ export { createMinedBoard };
 
 - Vamos criar uma const _diferent_ a qual irá receber um valor booleano de acordo com a verificação da condição: se _r_ for diferente(!==) da _row_ passada no parâmetro da função ou(||) _c_ for diferente da _column_ passada como parâmetro da função o valor vai ser _true_(se pelo menos um dos dois forem direntes significa que não estamos tratando do campo em questão), senão recebe _false_:
 
-``` JSX
+``` JS
 // [...]
 
 const getNeighbors = (board, row, column) => {
@@ -2329,7 +2329,7 @@ export { createMinedBoard };
 
 - A outra validação vai ser para sabermos se temos um linha válida. E para isso, vamos criar uma constante chamada _validRow_ a qual irá receber um valor booleano de acordo com a verificação da condição: _r_ maior ou igual a(>=) _0_ e(&&) _r_ ser menor(<) do que o tamanho do tabuleiro/_board.length_:
 
-``` JSX
+``` JS
 // [...]
 
 const getNeighbors = (board, row, column) => {
@@ -2350,7 +2350,7 @@ export { createMinedBoard };
 
 - E iremos seguir a mesma lógica para verificar se temos uma coluna/_column_ válida:
 
-``` JSX
+``` JS
 // [...]
 
 const getNeighbors = (board, row, column) => {
@@ -2373,7 +2373,7 @@ export { createMinedBoard };
 - Em seguida, vamos verificar se/_if_ se todas as constantes/condicionais são verdadeiras/_true_ significa que podemos adicionar/empurrar/_push_ o campo/_board_ em questão ao array de vizinhos/_neighbors_.
 E no final da função vamos retornar esse array de vizinhos/_neighbors_ como resultado:
 
-``` JSX
+``` JS
 // [...]
 
 const getNeighbors = (board, row, column) => {
@@ -2400,7 +2400,7 @@ export { createMinedBoard };
 
 - A próxima função que vamos criar é para saber se a vizinhança é segura/_safeNeighborhood_, e essa função irá receber o tabuleiro/_board_, além disso disso, irá receber linha/_row_ e a coluna/_column_ onde está localizado o campo que queremos verificar se a vizinhança é segura:
 
-``` JSX
+``` JS
 // [...]
 
 const safeNeighborhood = (board, row, column) => {
@@ -2413,7 +2413,7 @@ export { createMinedBoard };
 - E uma vez que temos a linha e a coluna, conseguimos encontrar os vizinhos e "em cima" dos vizinhos vamos verificar se eles tem ou não tem mina. E para isso vamos criar uma função que ela vai ser responsável por usar o método _reduce_ para calcular e saber se determinada vizinhanção é segura ou não.
 Vamos criar uma função chamada segura/_safes_ e ela vai receber como parâmetro o resultado/_result_ que vai ser um totalizador e o vizinho atual/_neighbor_ que estamos percorrendo dentro do reduce:
 
-``` JSX
+``` JS
 // [...]
 
 const safeNeighborhood = (board, row, column) => {
@@ -2425,7 +2425,7 @@ export { createMinedBoard };
 
 - E essa função vai pegar o resultado e vai fazer a lógica para verificar se o vizinho não está minado/_!neighbor.mined_. Se o vizinho não estiver minado o resultado é _true_ e vai ser feita uma operação de e(&&), vai pegar o resultado atual/_result_ e o resultado se o vizinho não está minado, de tal forma se um dos vizinhos que forem verificados estiver minado todo resultado de _safes_ vai ser _false_, ou seja, não é seguro(tudo isso usando a lógica do reduce, que serve para iterar sobre um array e utilizar o valor de cada item para criar um objeto final com base em alguma regra. Como o próprio nome sugere, ela “reduz” os itens de um vetor a um valor único.):
 
-``` JSX
+``` JS
 // [...]
 
 const safeNeighborhood = (board, row, column) => {
@@ -2439,7 +2439,7 @@ export { createMinedBoard };
 Na função _safeNeighborhood_ vamos chamar a função de pegar os vizinhos/_getNeighbord_, e vamos passar o tabuleiro/_board_, além de passarmos a linha/_row_ e a coluna/_column_ do campo em questão. Em seguida, vamos chamar a função _reduce_ passando como função callback _safes_ e o valor inicial como _true_. 
 Desse modo, o valor retornado nessa função _safeNeighborhood_ vai  dizer se a vizinhança de um determiando nó/campo é segura(_true_) ou não(_false_):
 
-``` JSX
+``` JS
 // [...]
 
 const safeNeighborhood = (board, row, column) => {
@@ -2448,6 +2448,313 @@ const safeNeighborhood = (board, row, column) => {
 }
 
 export { createMinedBoard };
+```
+
+- Outra função de extrema importância é a função responsável por abrir um campo/_field_ chamada _openField_, e vamos passar como parâmetro para essa função o tabuleiro/_board_, além de passarmos a linha/_row_ e a coluna/_column_ do campo em questão:
+
+``` JS
+// [...]
+
+const openField = (board, row, column) => {
+  
+}
+
+export { createMinedBoard };
+```
+
+- Essa função vai ser chamada no momento que o evento de click no campo for registrado, e se a vizinhança for segura os campos vão abrindo de forma recursiva.
+Dentro da função vamos criar a const campo/_field_ que irá receber o array tabuleiro/_board_ nos indices de linha/_row_ e coluna/_column_ passados como parâmetro na função, o que vai resultar no campo em questão:
+
+``` JSX
+// [...]
+
+const openField = (board, row, column) => {
+  const field = board[row][column];
+}
+
+export { createMinedBoard };
+```
+
+- E o primeiro teste que vamos fazer é para saber se o campo/_field_ já está aberto ou não. Vamos verificar, se/_if_ o campo/_field_ não está aberto/_opened_(!field.opened):
+
+``` JSX
+// [...]
+
+const openField = (board, row, column) => {
+  const field = board[row][column];
+
+  if (!field.opened) {
+    
+  }
+}
+
+export { createMinedBoard };
+```
+
+- Se passar, significa que vamos abrir esse campo agora. E o atributo aberto/_opened_ do campo/_field_(fild.opened) vai receber verdadeiro/_true_:
+
+``` JSX
+// [...]
+
+const openField = (board, row, column) => {
+  const field = board[row][column];
+
+  if (!field.opened) {
+    field.opened = true;
+  }
+}
+
+export { createMinedBoard };
+```
+
+- E vamos verificar se o campo em questão está minado/_mined_, o que significa que acabou de acontecer uma explosão, então o atributo _exploded_ deve receber verdadeiro/_true_ também:
+
+``` JSX
+// [...]
+
+const openField = (board, row, column) => {
+  const field = board[row][column];
+
+  if (!field.opened) {
+    field.opened = true;
+
+    if (field.mined) {
+      field.exploded = true;
+    }
+  }
+}
+
+export { createMinedBoard };
+```
+
+- Caso contrário(o campo não está minado), vamos fazer o seguinte teste: se/_if_ a vizinhaça for segura, ou seja, a função _safeNeighborhood_ passando o tabuleiro/_board_, e a linha/_row_ e a coluna/_column_ do campo em questão retornar _true_, significa que vamos abrir os vizinhos também:
+
+``` JSX
+// [...]
+
+const openField = (board, row, column) => {
+  const field = board[row][column];
+
+  if (!field.opened) {
+    field.opened = true;
+
+    if (field.mined) {
+      field.exploded = true;
+    } else if (safeNeighborhood(board, row, column)) {
+      
+    }
+  }
+}
+
+export { createMinedBoard };
+```
+
+- Para isso, vamos precisar chamar _openField_ de forma recursiva para cada um dos vizinhos. 
+Primeiramente, vamos "pegar" os vizinhos com a função _getNeighbors_ passando o tabuleiro/_board_, e a linha/_row_ e a coluna/_column_ do tabuleiro em questão:
+
+``` JSX
+// [...]
+
+const openField = (board, row, column) => {
+  const field = board[row][column];
+
+  if (!field.opened) {
+    field.opened = true;
+
+    if (field.mined) {
+      field.exploded = true;
+    } else if (safeNeighborhood(board, row, column)) {
+      getNeighbors(board, row, column)
+    }
+  }
+}
+
+export { createMinedBoard };
+```
+
+- Em seguida, vamos fazer um _forEach_ para cada um dos vizinhos retornados na função _getNeighbors_(que nada mais é que um array de vizinhos) e cada um dos vizinhos vamos chamar de _n_ e vamos chamar de forma recursiva o _openField_ para cada um, passando o tabuleiro/_board_, a linha/_n.row_ e a _n.coluna_ onde esse vizinho tá localizado:
+
+``` JSX
+// [...]
+
+const openField = (board, row, column) => {
+  const field = board[row][column];
+
+  if (!field.opened) {
+    field.opened = true;
+
+    if (field.mined) {
+      field.exploded = true;
+    } else if (safeNeighborhood(board, row, column)) {
+      getNeighbors(board, row, column)
+        .forEach(n => openField(board, n.row, n.column))
+    }
+  }
+}
+
+export { createMinedBoard };
+```
+
+- Caso estejamos abrindo um campo/_field_ e ele não está minado/_field.mined_ e nem é uma vizinhança segura/_safeNeighborhood_ precisamos calcular quantas minas tem ao redor.
+Então vamos ter: senão/_else_ vamos crar uma const chamada vizinhos/_neighbors_ que vai receber o array com os vizinhos que a função _getNeighbors_(passando como parâmetro o _board_, e a _row_ e _column_ do campo que queremos pegar os vizinhos) vai retornar:
+
+``` JSX
+// [...]
+
+const openField = (board, row, column) => {
+  const field = board[row][column];
+
+  if (!field.opened) {
+    field.opened = true;
+
+    if (field.mined) {
+      field.exploded = true;
+    } else if (safeNeighborhood(board, row, column)) {
+      getNeighbors(board, row, column)
+        .forEach(n => openField(board, n.row, n.column))
+    } else {
+      const neighbors = getNeighbors(board, row, column);
+    }
+  }
+}
+
+export { createMinedBoard };
+```
+
+- E para calcular quantos vizinhos estão minados/_mined_, primeiramente vamos pegar o atributo número de minas/ _nearMines_ do campo/_field_ em questão e vamos atribuir o resultado do _filter_ sobre os vizinhos/_neighbords_, onde ele vai percorrer cada vizinho/_n_ e vai pegar apenas os vizinhos que tem o atributo minado/_mined_(n.mined) e no final vai calcular o tamanho/_length_ desse array que o _filter_ vai retornar, que vai ser o valor armazenado em _nearMines_ desse campo/_field_:
+
+``` JSX
+// [...]
+
+const openField = (board, row, column) => {
+  const field = board[row][column];
+
+  if (!field.opened) {
+    field.opened = true;
+
+    if (field.mined) {
+      field.exploded = true;
+    } else if (safeNeighborhood(board, row, column)) {
+      getNeighbors(board, row, column)
+        .forEach(n => openField(board, n.row, n.column))
+    } else {
+      const neighbors = getNeighbors(board, row, column);
+
+      field.nearMines = neighbors.filter(n => n.mined).length;
+    }
+  }
+}
+
+export { createMinedBoard };
+```
+
+- Outra função importante é a _fields_, onde vamos percorrer todos os campos como se fosse um array. 
+Ela vai receber como parâmetro o tabuleiro/_board_ e essa função vai pegar um array vazio e vai dá um _.concat_ em cima do _board_ com o operador spreed(...) para juntar todos os arrays em um único array com todos os campos de forma linhear(já que o tabuleiro é uma matriz).
+Fica mais fácil armazenar os campos dessa forma, como array para que em algumas situações seja feito um _map_, _filter_ ou _reduce_ sem termos que percorrer as linhas e as colunas da matriz _board_:
+
+``` JSX
+const fields = (board) => [].concat(...board); 
+
+export { createMinedBoard };
+```
+
+- Um exemplo do uso dessa função _fields_ que acabamos de criar é a função para saber se há algum campo/_field_ explodido/_exploded_.
+Vamos criar a função _hadExplodision_ ela vai receber como parâmetro o tabuleiro/_board_ e essa função vai chamar a função que contém todos os campos _fields_ passando o _board_ e nela vamos aplicar um _filter_ onde ele vai percorrer cada campo e vai pegar apenas os campos que contém o atributo _exploded_:
+
+``` JSX
+const hadExplosion = (board) => {
+  fields(board).filter(field => field.exploded)
+}
+
+export { createMinedBoard };
+```
+
+- E se o _length_ for maior(>) que 0, significa que o resultado armazenado no _hadExplodision_ vai ser _true_, caso contrário _false_. 
+Vamos usar essa função para saber se o jogo terminou ou não:
+
+``` JSX
+const hadExplosion = (board) => {
+  fields(board).filter(field => field.exploded).length > 0;
+}
+
+export { createMinedBoard };
+```
+
+- Existe um outro conceito também, que é o conceito de pendente. O que seria algo pendente? Servirá para saber se o usuário ganhou ou não o jogo... se houver algum campo que está no estado pendente quer dizer que o usuário ainda não descobriu todos os campos seguros(sem mina) e não marcou com flag os campos que tem mina. Então, o usuário só ganha o jogo se não houver nenhum campo pendente(campo pendente é o campo que não tem mina está fechado e está minado e não foi marcado com a flag).
+E para descobrirmos se o usuário ganhou ou não o jogo, vamos criar uma nova função chamada pendente/_pendding_ e ela vai receber como parâmetro o campo/_field_ e "em cima" do field vamos verificar se o campo/_field_ está minado/_mined_ e(&&) não está(!) marcado com uma bandeira/_flag_ significa que ele está pendente e isso vai retornar o valor booleano _true_:
+
+``` JSX
+// [...]
+
+const pendding = (field) => {
+  (field.mined && !field.flagged)
+}
+
+export { createMinedBoard };
+```
+
+- Ou(||) se o campo/_field_ não está(!) minado/_mined_ e(&&) não está(!) aberto/_opened_, isso também significa que está pendente e vai retornar o valor booleano _true_:
+
+``` JSX
+// [...]
+
+const pendding = (field) => {
+  (field.mined && !field.flagged) || (!field.mined && !field.opened);
+}
+
+export { createMinedBoard };
+```
+
+- Em seguida, vamos criar uma outra função chamada ganhou o jogo/_wonGame_ e ela vai receber como parâmetro o tabuleiro/_board_ e ela irá passar por cada um dos campos chamando a função que cria um array _fields_ passando para ela o _board_ como parâmetro e com o método _filter_ vamos filtrar apenas os campos que estão pendentes/_pendding_. E no final se o tamanho/_length_ desse array retornado for igual(===) a 0 significa que o usuário ganhou e essa função vai retornar o valor booleano _true_:
+
+``` JSX
+const wonGame = (board) => {
+  fields(board).filter(pendding).length === 0;
+}
+
+export { createMinedBoard };
+```
+
+- E a última função que vamos criar vai ser para mostrar as minas que eventualmente existem no jogo, quando o usuário clica no campo/_field_ e ele está minado/_mined_ e isso gera uma explosão, e logo depois que foi detectado que o usuário perdeu o jogo vai ser chamada a função que irá exibir todas as minas.
+E essa função vai se chamar exibir minas/_showMines_ ela irá receber como parâmetro o tabuleiro/_board_ e nela vamos chamar a função que cria um array dos campos _fields_ passando o board como parâmetro e em seguida, vamos aplicar um _filter_ nesse array retornado para pegar cada campo/_field_ minado/_mined_:
+
+``` JSX
+const showMines = (board) => {
+  fields(board).filter(field => field.mined)
+}
+
+export { createMinedBoard };
+```
+
+- Pegando todos os campos minados/_field.mined_ significa que agora podemos fazer um _forEach_ "em cima" desse array retornado no _filter_. E vamos pecorrer cada campo/_field_ e vamos passar para o atributo aberto/_opened_ o valor _true_(para abrir todos os campos minados quando essa função for chamada):
+
+``` JSX
+const showMines = (board) => {
+  fields(board).filter(field => field.mined)
+    .forEach(field => field.opened = true);
+}
+
+export { createMinedBoard };
+```
+
+- Por fim, vamos exportar todas as funções que vamos precisar que fiquem acessíveis fora desse arquivo:
+
+``` JSX
+// [...]
+
+const showMines = (board) => {
+  fields(board).filter(field => field.mined)
+    .forEach(field => field.opened = true);
+}
+
+export { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines
+};
 ```
 
 ## Criando APK
