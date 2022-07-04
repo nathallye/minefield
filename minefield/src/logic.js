@@ -90,19 +90,19 @@ const openField = (board, row, column) => {
 const fields = (board) => [].concat(...board);
 
 const hadExplosion = (board) => {
-  fields(board).filter(field => field.exploded).length > 0;
+  return fields(board).filter(field => field.exploded).length > 0;
 }
 
 const pendding = (field) => {
-  (field.mined && !field.flagged) || (!field.mined && !field.opened);
+  return (field.mined && !field.flagged) || (!field.mined && !field.opened);
 }
 
 const wonGame = (board) => {
-  fields(board).filter(pendding).length === 0;
+  return fields(board).filter(pendding).length === 0;
 }
 
 const showMines = (board) => {
-  fields(board).filter(field => field.mined)
+  return fields(board).filter(field => field.mined)
     .forEach(field => field.opened = true);
 }
 

@@ -2663,7 +2663,7 @@ Vamos criar a função _hadExplodision_ ela vai receber como parâmetro o tabule
 
 ``` JSX
 const hadExplosion = (board) => {
-  fields(board).filter(field => field.exploded)
+  return fields(board).filter(field => field.exploded)
 }
 
 export { createMinedBoard };
@@ -2674,7 +2674,7 @@ Vamos usar essa função para saber se o jogo terminou ou não:
 
 ``` JSX
 const hadExplosion = (board) => {
-  fields(board).filter(field => field.exploded).length > 0;
+  return fields(board).filter(field => field.exploded).length > 0;
 }
 
 export { createMinedBoard };
@@ -2687,7 +2687,7 @@ E para descobrirmos se o usuário ganhou ou não o jogo, vamos criar uma nova fu
 // [...]
 
 const pendding = (field) => {
-  (field.mined && !field.flagged)
+  return (field.mined && !field.flagged)
 }
 
 export { createMinedBoard };
@@ -2699,7 +2699,7 @@ export { createMinedBoard };
 // [...]
 
 const pendding = (field) => {
-  (field.mined && !field.flagged) || (!field.mined && !field.opened);
+  return (field.mined && !field.flagged) || (!field.mined && !field.opened);
 }
 
 export { createMinedBoard };
@@ -2709,7 +2709,7 @@ export { createMinedBoard };
 
 ``` JSX
 const wonGame = (board) => {
-  fields(board).filter(pendding).length === 0;
+  return fields(board).filter(pendding).length === 0;
 }
 
 export { createMinedBoard };
@@ -2720,7 +2720,7 @@ E essa função vai se chamar exibir minas/_showMines_ ela irá receber como par
 
 ``` JSX
 const showMines = (board) => {
-  fields(board).filter(field => field.mined)
+  return fields(board).filter(field => field.mined)
 }
 
 export { createMinedBoard };
@@ -2730,7 +2730,7 @@ export { createMinedBoard };
 
 ``` JSX
 const showMines = (board) => {
-  fields(board).filter(field => field.mined)
+  return fields(board).filter(field => field.mined)
     .forEach(field => field.opened = true);
 }
 
@@ -2743,7 +2743,7 @@ export { createMinedBoard };
 // [...]
 
 const showMines = (board) => {
-  fields(board).filter(field => field.mined)
+  return fields(board).filter(field => field.mined)
     .forEach(field => field.opened = true);
 }
 
