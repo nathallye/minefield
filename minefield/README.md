@@ -2757,6 +2757,1123 @@ export {
 };
 ```
 
+## Abrir Campo(onPress)
+
+- Para que quando for detectado o click sobre o campo ele abra, vamos precisar importar o componente _TouchableWithoutFeedback_ dentro do componente funcional Campo/_field_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text, TouchableWithoutFeedback } from "react-native";
+
+import params from "../params";
+
+import Mine from "./Mine";
+import Flag from "./Flag";
+
+const Field = (props) => {
+  // [...]
+
+  return (
+    <View style={styleField}>
+      // [...]
+    </View>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- Feito isso, vamos envolver todo o retorno de JSX do nosso componente Campo/_Field_ com o componente _TouchableWithoutFeedback_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text, TouchableWithoutFeedback } from "react-native";
+
+import params from "../params";
+
+import Mine from "./Mine";
+import Flag from "./Flag";
+
+const Field = (props) => {
+  // [...]
+
+  return (
+    <TouchableWithoutFeedback>
+      <View style={styleField}>
+        {!mined && opened && nearMines > 0 
+        ? (<Text style={[styles.label, { color: color }]}>{nearMines}</Text>)
+        : (false)}
+
+        {mined && opened
+        ? (<Mine />)
+        : (false)}
+
+        {flagged && !opened
+        ? (<Flag />)
+        : (false)}
+      </View>
+    </TouchableWithoutFeedback>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- E para o componente _TouchableWithoutFeedback_ vamos ter o evento _onPress_ que quando ele for acionado irá chamar a função que está dentro da propriedade _onOpen_ e essa função vamos esperar receber via props do componente pai _MineField_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text, TouchableWithoutFeedback } from "react-native";
+
+import params from "../params";
+
+import Mine from "./Mine";
+import Flag from "./Flag";
+
+const Field = (props) => {
+  // [...]
+
+  return (
+    <TouchableWithoutFeedback onPress={props.onOpen}>
+      <View style={styleField}>
+        {!mined && opened && nearMines > 0 
+        ? (<Text style={[styles.label, { color: color }]}>{nearMines}</Text>)
+        : (false)}
+
+        {mined && opened
+        ? (<Mine />)
+        : (false)}
+
+        {flagged && !opened
+        ? (<Flag />)
+        : (false)}
+      </View>
+    </TouchableWithoutFeedback>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- Agora, indo no _MineField_ componente pai do _Field_, vamos passar como atributo a função _onOpen_ e essa função vai esperar receber via props uma função dentro da propriedade _onOpenField_ que vamos passar como parâmetro para ela a linha/_r_ e a coluna/_c_ do campo que queremos abrir.
+Porque todo o estado da aplicação está dentro de App, e o componente _App_ está referênciando o _MineField_ e o _MineField_ está referênciando o _Field_. 
+O evento acontece no _Field_, então o pai(_MineField_) dele passa uma função e deve ser notificado quando ela é acionada. E o _MineField_ também vai esperar receber uma função do seu componente pai(_App_) para quando o evento acontecer o pai ser notificado, que é o componente _App_ que controla o estado, então estamos passando a função duas vezes _App_ passa uma função para o _MineField_ e ele vai passar uma função para o _Field_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import Field from "./Field";
+
+const MineField = (props) => {
+  console.log(props)
+  const rows = props.board.map((row, r) => {
+    const columns = row.map((field, c) => {
+      return <Field {...field} key={c} 
+        onOpen={() => props.onOpenField(r, c)} />
+    })
+    return <View 
+      key={r}
+      style={{flexDirection: "row"}}>{columns}</View>
+  })
+
+  return (
+    <View style={styles.container}>{rows}</View>
+  );
+}
+
+const styles = StyleSheet.create({
+  // [...] 
+});
+
+export default MineField;
+```
+
+- Agora indo para o componente _App_, vamos importar a API _Alert_ para mostrarmos um alerta dizendo que o usuário perdeu.
+Além disso, vamos importar as outras funções que vamos precisar do arquivo _logic_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+import params from "../params";
+
+import MineField from "../components/MineField";
+
+import { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines
+} from "../logic";
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = this.createState()
+  }
+
+  // [...]
+
+  render() {
+    return (
+      <View style={styles.container}>
+       // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Além do estado que já temos que é o _board_, vamos precisar colocar mais duas variáveis no estado que é para saber se ganhou/_won_ que irá iniciar como _false_ e se perdeu/_lost_ que também irá iniciar como _false_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+// [...]
+
+export default class App extends Component {
+
+  // [...]
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- No componente _App_ vamos passar para o _MineField_ uma propriedade chamada _onOpenField_ que vai conter uma função. Essa função esperamos passar para o componente para que no momento que um campo for aberto essa função seja chamada de volta, exatamente o conceito de callback.
+Então vamos criar a função _onOpenField_ e ela vai esperar receber como parâmetro a linha/_row_ e a coluna/_column_ do campo em questão, a qual iremos receber como resposta:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+ // [...]
+
+export default class App extends Component {
+
+    // [...]
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  onOpenField = (row, column) => { // não precisamos receber o board, pois ele já esta no state
+    
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+          // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- E dentro dela vamos chamar a função de abrir o campo/_openField_ que criamos no arquivo _logic_, e essa função espera receber o tabuleiro/_board_(que nesse caso vamos clonar ele chamando a função _cloneBoard_ que criamos no arquivo _logic_ para evitar alterações em lugares que não queremos aí sim alteramos o estado do componente) além disso, a linha/_row_ e a coluna/_coluna_ do campo que iremos abrir.
+Então, primeiramente vamos criar uma const chamada _board_ que irá receber o retorno da função _cloneBoard_ passando como parâmetro o tabuleiro/_board_ do estado atual:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+ // [...]
+
+export default class App extends Component {
+
+    // [...]
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  onOpenField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+          // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Em seguida, vamos chamar a função de abrir campo/_openField_ e passar como parâmetro o _board_ que foi clonado e a linha/_row_ e a coluna/_column_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+ // [...]
+
+export default class App extends Component {
+
+    // [...]
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  onOpenField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    openField(board, row, column);
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+          // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Uma vez que abrimos o campo, vamos verificar se o usuáro perdeu.
+Para isso, vamos criar a const perdeu/_lost_ e ela vai receber o retorno da função que verifica se teve explosão/_hadExplosion_ dentro do tabuleiro/_board_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+ // [...]
+
+export default class App extends Component {
+
+    // [...]
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  onOpenField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    openField(board, row, column);
+
+    const lost = hadExplosion(board); // recebe o retorno da função que é um valor booleano
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+          // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- E também vamos verificar se o usuáro ganhou.
+Para isso, vamos criar a const ganhou/_won_ e ela vai receber o retorno da função que verifica se não tem nenhum campo pendente/_wonGame_ dentro do tabuleiro/_board_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+ // [...]
+
+export default class App extends Component {
+
+    // [...]
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  onOpenField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    openField(board, row, column);
+
+    const lost = hadExplosion(board); // recebe o retorno da função que é um valor booleano
+    const won = wonGame(board); // recebe o retorno da função que é um valor booleano
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+          // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- E no final vamos realizar alguns testes.
+Se/_if_ perdeu/_lost_ igual a _true_(mais não precisa colocar assim lost == true; apenas lost) vamos abrir todas as minas, ou seja, chamar a função _showMines_ passando o tabuleiro/_board_ como parâmetro e mostrar um _Alert_ para avisar ao usuário que ele perdeu:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+ // [...]
+
+export default class App extends Component {
+
+    // [...]
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  onOpenField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    openField(board, row, column);
+
+    const lost = hadExplosion(board); 
+    const won = wonGame(board); 
+    
+    if (lost) {
+      showMines(board)
+      Alert.alert("Você acabou de explodir!", "Fim de Jogo");
+    }
+ }
+
+  render() {
+    return (
+      <View style={styles.container}>
+          // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- E também iremos realizar outra verificação para saber se o usuário ganhou.
+Se/_if_ ganhou/_won_ igual a _true_(mais não precisa colocar assim won == true; apenas won) vamos mostrar um _Alert_ para avisar ao usuário que ele ganhou:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+ // [...]
+
+export default class App extends Component {
+
+    // [...]
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  onOpenField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    openField(board, row, column);
+
+    const lost = hadExplosion(board); 
+    const won = wonGame(board); 
+    
+    if (lost) {
+      showMines(board)
+      Alert.alert("Você acabou de explodir!", "Fim de Jogo!");
+    }
+
+    if (won) {
+      Alert.alert("Parabéns!", "Você venceu!");
+    }
+ }
+
+  render() {
+    return (
+      <View style={styles.container}>
+          // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- E independente se o usuáro perdeu ou ganhou, é importante que seja realizada a mudança de estado do componente para que ele consiga de fato refletir na interface.
+E para isso vamos chamar a função que altera o estado do componente/_setState_ do contexto atual/_this.setState_ e vamos passar um objeto com o novo _board_, além disso, _won_ e _lost_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+ // [...]
+
+export default class App extends Component {
+
+    // [...]
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  onOpenField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    openField(board, row, column);
+
+    const lost = hadExplosion(board); 
+    const won = wonGame(board); 
+    
+    if (lost) {
+      showMines(board)
+      Alert.alert("Você acabou de explodir!", "Fim de Jogo!");
+    }
+
+    if (won) {
+      Alert.alert("Parabéns!", "Você venceu!");
+    }
+
+    this.setState({ board, won, lost }); // como a chave e o valor possuem o mesmo nome podemos simplificar dessa forma. A forma completa fica assim: { board: board, won: won, lost: lost }
+ }
+
+  render() {
+    return (
+      <View style={styles.container}>
+          // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- A última coisa que vamos fazer para que o "abrir campo" esteja ok, é passar o método/função _onOpenField_ que criamos(this.onOpenField) para o _MineField_ via propriedade _onOpenField_(não tem problema criar a função com o mesmo nome da propriedade):
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+import params from "../params";
+
+import MineField from "../components/MineField";
+
+import { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines
+} from "../logic";
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = this.createState()
+  }
+
+  minesAmount = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return Math.ceil(rows * columns * params.difficultLevel);
+  }
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  onOpenField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    openField(board, row, column);
+    
+    const lost = hadExplosion(board);
+    const won = wonGame(board);
+
+    if (lost) {
+      showMines(board)
+      Alert.alert("Você acabou de explodir!", "Fim de Jogo");
+    }
+
+    if (won) {
+      Alert.alert("Parabéns!", "Você venceu!");
+    }
+
+    this.setState({ board, won, lost });
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>Iniciando o Minefield</Text>
+        <Text>Tamanho da grade: 
+          {params.getRowsAmount()}x{params.getColumnsAmount()}</Text>
+          
+        <View style={styles.board}>
+          <MineField board={this.state.board} 
+           onOpenField={this.onOpenField} />
+        </View>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+## Marcar Campo com Flag (onLongPress)
+
+- Dentro do arquivo _logic_ vamos criar a função _invertFlag_ que irá receber como parâmetro o tabuleiro/_board_, e além disso a linha/_row_ e a coluna/_column_ do campo que estamos querendo marcar ou desmarcar com bandeira/_falg_:
+
+``` JSX
+// [...]
+
+const invertFlag = (board, row, column) => {
+  
+}
+
+export { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines
+};
+```
+
+- Em seguida, vamos criar a const campo/_field_ a partir do tabuleiro/_board_ na linha/_row_ e coluna/_column_ passadas nos parâmetros:
+
+``` JSX
+// [...]
+
+const invertFlag = (board, row, column) => {
+  const field = board[row][column];
+}
+
+export { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines
+};
+```
+
+- Em seguida, vamos marcar a propriedade bandeirado/_flagged_ desse campo/_field_ em questão(que foi pressionado) de acordo com o estado dele atual. 
+Com uma negação na frente, se tiver verdadeiro/_true_ seta falso/_false_ e se tiver falso/_false_ seta verdadeiro/_true_.
+E essa função também precisará ser acessada for desse arquivo, portanto vamos exportá-la:
+
+``` JSX
+// [...]
+
+const invertFlag = (board, row, column) => {
+  const field = board[row][column];
+  field.flagged = !field.flagged;
+}
+
+export { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+  invertFlag
+};
+```
+
+- E vamos seguir a mesma lógica de ir notificando os componentes até chegar no componente App. 
+Então, primeiramente no _Field_ no componente _TouchableWithoutFeedback_ vamos ter o evento _onLongPress_ que quando ele for acionado irá chamar a função que está dentro da propriedade _onSelect_ e essa função vamos esperar receber via props do componente pai _MineField_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text, TouchableWithoutFeedback } from "react-native";
+
+// [...]
+
+const Field = (props) => {
+  // [...]
+
+  return (
+    <TouchableWithoutFeedback onPress={props.onOpen}
+      onLongPress={props.onSelect}>
+      <View style={styleField}>
+        // [...]
+      </View>
+    </TouchableWithoutFeedback>
+  );
+}
+
+const styles =  StyleSheet.create({
+  // [...]
+});
+
+export default Field;
+```
+
+- Agora, indo no _MineField_ componente pai do _Field_, vamos passar como atributo a função _onSelect_ e essa função vai esperar receber via props uma função dentro da propriedade _onSelectField_ que vamos passar como parâmetro para ela a linha/_r_ e a coluna/_c_ do campo que queremos marcar ou desmarcar com flag.
+Porque todo o estado da aplicação está dentro de App, e o componente _App_ está referênciando o _MineField_ e o _MineField_ está referênciando o _Field_. 
+O evento acontece no _Field_, então o pai(_MineField_) dele passa uma função e deve ser notificado quando ela é acionada. E o _MineField_ também vai esperar receber uma função do seu componente pai(_App_) para quando o evento acontecer o pai ser notificado, que é o componente _App_ que controla o estado, então estamos passando a função duas vezes _App_ passa uma função para o _MineField_ e ele vai passar uma função para o _Field_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import Field from "./Field";
+
+const MineField = (props) => {
+  console.log(props)
+  const rows = props.board.map((row, r) => {
+    const columns = row.map((field, c) => {
+      return <Field {...field} key={c} 
+        onOpen={() => props.onOpenField(r, c)} 
+        onSelect={e => props.onSelectField(r, c)} />
+    })
+    return <View 
+      key={r}
+      style={{flexDirection: "row"}}>{columns}</View> 
+  })
+
+  return (
+    <View style={styles.container}>{rows}</View>
+  );
+}
+
+const styles = StyleSheet.create({
+  // [...] 
+});
+
+export default MineField;
+```
+
+- E agora, voltando para o componente _App_ vamos precisar primeiramente importar a função que irá inverter a marcação da bandeira/_invertFlag_.
+E em seguida vamos criar a função _onSelectField_ que irá receber como parâmetro a linha/_row_ e a coluna/_column_ que queremos marcar ou desmarcar a flag:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+import params from "../params";
+
+import MineField from "../components/MineField";
+
+import { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+  invertFlag
+} from "../logic";
+
+export default class App extends Component {
+
+  // [...]
+
+  onSelectField = (row, column) => {
+    
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- E dentro dela vamos chamar a função de inverter a bandeira/_invertFlag_ que criamos no arquivo _logic_, e essa função espera receber o tabuleiro/_board_(que nesse caso vamos clonar ele chamando a função _cloneBoard_ que criamos no arquivo _logic_ para evitar alterações em lugares que não queremos aí sim alteramos o estado do componente) além disso, a linha/_row_ e a coluna/_coluna_ do campo que iremos abrir.
+Então, primeiramente vamos criar uma const chamada _board_ que irá receber o retorno da função _cloneBoard_ passando como parâmetro o tabuleiro/_board_ do estado atual:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+// [...]
+
+export default class App extends Component {
+
+  // [...]
+
+  onSelectField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Em seguida, vamos chamar a função de inverter a bandeira/_invertFlag_ e passar como parâmetro o _board_ que foi clonado e a linha/_row_ e a coluna/_column_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+// [...]
+
+export default class App extends Component {
+
+  // [...]
+
+  onSelectField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    invertFlag(board, row, column);
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Uma vez que marcamos o campo com a bandeira/flag, vamos verificar se o usuáro ganhou, pois pode ser o último campo que estava pendente.
+Para isso, vamos criar a const ganhou/_won_ e ela vai receber o retorno da função que verifica se não tem nenhum campo pendente/_wonGame_ dentro do tabuleiro/_board_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+// [...]
+
+export default class App extends Component {
+
+  // [...]
+
+  onSelectField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    invertFlag(board, row, column);
+
+    const won = wonGame(board);
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- E no final vamos realizar o teste se ele ganhou.
+Se/_if_ ganhou/_won_ igual a _true_(mais não precisa colocar assim won == true; apenas won) vamos mostrar um _Alert_ para avisar ao usuário que ele ganhou:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+// [...]
+
+export default class App extends Component {
+
+  // [...]
+
+  onSelectField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    invertFlag(board, row, column);
+
+    const won = wonGame(board);
+
+    if (won) {
+      Alert.alert("Parabéns!", "Você Venceu!!");
+    }
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- E independente se o usuáro ganhou ou não, é importante que seja realizada a mudança de estado do componente para que ele consiga de fato refletir na interface.
+E para isso vamos chamar a função que altera o estado do componente/_setState_ do contexto atual/_this.setState_ e vamos passar um objeto com o novo _board_, além disso, _won_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+// [...]
+
+export default class App extends Component {
+
+  // [...]
+
+  onSelectField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    invertFlag(board, row, column);
+
+    const won = wonGame(board);
+
+    if (won) {
+      Alert.alert("Parabéns!", "Você Venceu!!");
+    }
+
+    this.setState({ board, won }); // como a chave e o valor possuem o mesmo nome podemos simplificar dessa forma. A forma completa fica assim: { board: board, won: won }
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- A última coisa que vamos fazer para que o "marcar campo" esteja ok, é passar o método/função _onSelectField_ que criamos(this.onSelectField) para o _MineField_ via propriedade _onSelectField_(não tem problema criar a função com o mesmo nome da propriedade):
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+import params from "../params";
+
+import MineField from "../components/MineField";
+
+import { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+  invertFlag
+} from "../logic";
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = this.createState()
+  }
+
+  minesAmount = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return Math.ceil(rows * columns * params.difficultLevel);
+  }
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  onOpenField = (row, column) => { 
+    const board = cloneBoard(this.state.board);
+    openField(board, row, column);
+    
+    const lost = hadExplosion(board);
+    const won = wonGame(board);
+
+    if (lost) {
+      showMines(board)
+      Alert.alert("Você acabou de explodir!", "Fim de Jogo");
+    }
+
+    if (won) {
+      Alert.alert("Parabéns!", "Você venceu!");
+    }
+
+    this.setState({ board, won, lost }); 
+  }
+
+  onSelectField = (row, column) => { no state
+    const board = cloneBoard(this.state.board);
+    invertFlag(board, row, column);
+
+    const won = wonGame(board);
+    
+    if (won) {
+      Alert.alert("Parabéns!", "Você Venceu!!");
+    }
+
+    this.setState({ board, won }); 
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>Iniciando o Minefield</Text>
+        <Text>Tamanho da grade: 
+          {params.getRowsAmount()}x{params.getColumnsAmount()}</Text>
+          
+        <View style={styles.board}>
+          <MineField board={this.state.board} 
+           onOpenField={this.onOpenField} 
+           onSelectField={this.onSelectField} />
+        </View>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
 ## Criando APK
 
 ### Gerando uma Chave de Upload
