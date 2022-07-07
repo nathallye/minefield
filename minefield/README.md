@@ -3874,6 +3874,511 @@ const styles = StyleSheet.create({
 });
 ```
 
+## Cabeçalho do Jogo
+
+- Primeiramente, vamos criar uma função dentro de _logic.js_ que irá calcular quantas bandeiras/_flags_ já foram usadas no jogo/marcadas dentro do tabuleiro.
+Para isso, vamos criar uma função chamada bandeiras usadas/_flagsUsed_ que irá receber como parâmetro o tabuleiro/_board_:
+
+``` JSX
+// [...]
+
+const flagsUsed = (board) => {
+  
+}
+
+export { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+  invertFlag
+};
+```
+
+- E essa função vai chamar a função que coloca os campos em um array linear/_fields_ e iremos passar para ela o tabuleiro/_board_ como parâmetro, e em cima desse array criado vamos aplicar um _filter_ o qual irá percorrer cada campo/_field_ e filtrar aqueles que contém o atributo _flagged_ e por fim o método _length_ vai contar quantos campos continham esse atributo e retornar esse valor como resultado da função.
+Por fim, vamos exportá-la para que fique acessível fora desse arquivo:
+
+``` JSX
+// [...]
+
+const flagsUsed = (board) => {
+  return fields(board)
+    .filter(field => field.flagged).length
+}
+
+export { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+  invertFlag,
+  flagsUsed
+};
+```
+
+- Em seguida, dentro do componente _App_ vamos importar essa função que vamos mais a frente usá-la:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+import params from "../params";
+
+import MineField from "../components/MineField";
+
+import { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+  invertFlag,
+  flagsUsed
+} from "../logic";
+
+export default class App extends Component {
+
+  // [...]
+
+  render() {
+    return (
+      <View style={styles.container}>
+        // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Por enquanto, dentro de src/components vamos criar um novo componente baseado em função chamado Cabeçalho/_Header_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+
+import Flag from "./Flag";
+
+const Header = (props) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.flagContainer}>
+      
+      </View>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+
+  },
+  flagContainer: {
+    
+  }
+});
+
+export default Header;
+```
+
+- Dentro da _View_ cujo o objeto de estilo aplicado é _flagContainer_ vamos inserir um _TouchableOpacity_ que é uma área clicável.
+No evento _onPress_ vamos esperar receber a partir das _props_ do componente Header uma função dentro de _onFlagPress_(ou seja, quando clicarmos na bandeira o modal será habilitado, esse modal vamos fazer mais a frente).
+Além disso, vamos aplicar o estilo _flagButton_ ao _TouchableOpacity_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+
+import Flag from "./Flag";
+
+const Header = (props) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.flagContainer}>
+        <TouchableOpacity onPress={props.onFlagPress}
+          style={styles.flagButton}>
+
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+
+  },
+  flagContainer: {
+
+  },
+  flagButton: {
+    
+  }
+});
+
+export default Header;
+```
+
+- Em seguida, dentro dessa área/_TouchableOpacity_ vamos inserir a _Flag_ passando a própriedade _bigger_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+
+import Flag from "./Flag";
+
+const Header = (props) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.flagContainer}>
+        <TouchableOpacity onPress={props.onFlagPress}
+          style={styles.flagButton}>
+          <Flag bigger />
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+
+export default Header;
+```
+
+- Logo depois, vamos inserir um _Text_ que irá exibir quantas flags ainda faltam colocar. Vamos interpolar o valor de _flagsLeft_ que vamos esperar receber via props e nesse _Text_ vamos aplicar o objeto de estilo _flagsLeft_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+
+import Flag from "./Flag";
+
+const Header = (props) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.flagContainer}>
+        <TouchableOpacity onPress={props.onFlagPress}
+          style={styles.flagButton}>
+          <Flag bigger />
+        </TouchableOpacity>
+        <Text style={styles.flagsLeft}>= {props.flagsLeft}</Text>
+      </View>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+
+  },
+  flagContainer: {
+
+  },
+  flagButton: {
+    
+  }, 
+  flagsLeft: {
+    
+  }
+});
+
+export default Header;
+```
+
+- Logo depois da _View_ que irá exibir essa parte da _Flag_ vamos inserir outro _TouchableOpacity_ já com o objeto de estilo _button_ para ser o butão que iremos clicar para iniciar um novo jogo.
+O evento _onPress_ dele irá receber uma função via _props_ dentro de _onNewGame_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+
+import Flag from "./Flag";
+
+const Header = (props) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.flagContainer}>
+        <TouchableOpacity onPress={props.onFlagPress}
+          style={styles.flagButton}>
+          <Flag bigger />
+        </TouchableOpacity>
+        <Text style={styles.flagsLeft}>= {props.flagsLeft}</Text>
+      </View>
+
+      <TouchableOpacity onPress={props.onNewGame}
+        style={styles.button}>
+
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+
+  },
+  flagContainer: {
+
+  },
+  flagButton: {
+    
+  }, 
+  flagsLeft: {
+
+  },
+  button: {
+    
+  }
+});
+
+export default Header;
+```
+
+- Dentro de _TouchableOpacity_ vamos inserir um _Text_ que irá conter o label "Novo Jogo" e irá receber o objeto de estilo _buttonLabel_:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+
+import Flag from "./Flag";
+
+const Header = (props) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.flagContainer}>
+        <TouchableOpacity onPress={props.onFlagPress}
+          style={styles.flagButton}>
+          <Flag bigger />
+        </TouchableOpacity>
+        <Text style={styles.flagsLeft}>= {props.flagsLeft}</Text>
+      </View>
+
+      <TouchableOpacity onPress={props.onNewGame}
+        style={styles.button}>
+          <Text style={styles.buttonLabel}>Novo Jogo</Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+
+  },
+  flagContainer: {
+
+  },
+  flagButton: {
+    
+  }, 
+  flagsLeft: {
+
+  },
+  button: {
+
+  },
+  buttonLabel: {
+    
+  }
+});
+
+export default Header;
+```
+
+- Agora, vamos aplicar as propriedades aos objetos de estilo:
+
+``` JSX
+import React from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+
+import Flag from "./Flag";
+
+const Header = (props) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.flagContainer}>
+        <TouchableOpacity onPress={props.onFlagPress}
+          style={styles.flagButton}>
+          <Flag bigger />
+        </TouchableOpacity>
+        <Text style={styles.flagsLeft}>= {props.flagsLeft}</Text>
+      </View>
+      <TouchableOpacity onPress={props.onNewGame}
+        style={styles.button}>
+          <Text style={styles.buttonLabel}>Novo Jogo</Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#EEE", // cor de fundo do flag container
+
+    flex: 1, // irá permitir o flag container crescer em todo espaço possível
+    flexDirection: "row", // por padrão o flex direction do RN é a coluna/column
+    justifyContent: "space-around", // para mecher no alinhamento dos elementos/flex items no Eixo Principal/main axis(que nesse caso é a linha/row, pois alteramos o flexDirection para row)
+    alignItems: "center", // para mecher no alinhamento dos elementos/flex items no eixo cruzado/cross axis(que nesse caso é no eixo da coluna/column, pois alteramos o flexDirection para row) 
+
+    paddingTop: 20, // espaçamento entre o conteúdo/flag container e a borda do topo
+    paddingHorizontal: 20, // espaçamento entre o conteúdo/flag container e a borda do eixo horizontal(esquerda e direita)
+  },
+  flagContainer: {
+    flexDirection: "row", // por padrão o flex direction do RN é a coluna/column
+  },
+  flagButton: {
+    marginTop: 10, // espaçamento entre a borda superior do botão e os demais elementos
+    minWidth: 30, // largura mínima do botão
+  }, 
+  flagsLeft: {
+    fontSize: 30, // tamanho da fonte do texto
+    fontWeight: "bold", // peso da fonte (bold = negrito)
+
+    paddingTop: 5, // espaçamento entre o conteúdo/flags left e a borda do topo
+    marginLeft: 20, // // espaçamento entre a borda esquerda do flags left e os demais elementos
+  },
+  button: {
+    backgroundColor: "#999", // cor de fundo do botão
+
+    padding: 5, // espaçamento entre o conteúdo/button e a todas as bordas
+  },
+  buttonLabel: {
+    fontSize: 20, // tamanho da fonte do texto do botão
+    fontWeight: "bold", // peso da fonte do texto do botão (bold = negrito)
+    color: "#DDD" // cor da fonte do texto do botão
+  }
+});
+
+export default Header;
+```
+
+- Agora, voltando no componente _App_ para conseguirmos visualizar de fato o que foi feito, exibir o cabeçalho do nosso jogo na tela, vamos importar o _Header_.
+E em seguida, vamos referenciá-lo no nosso trecho JSX passando a propriedade que informa o número de bandeiras que faltam serem marcas/_flagsLeft_ recebendo a chamada da função que calcula a quantidade de minas/_minesAmount_(do contexto atual _this_) subtraindo pelo valor retornado na função que calcula a quantidade de flags já marcadas no tabuleiro/_flagsUsed_: 
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+import params from "../params";
+
+import Header from "../components/Header";
+import MineField from "../components/MineField";
+
+import { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+  invertFlag,
+  flagsUsed
+} from "../logic";
+
+export default class App extends Component {
+
+  // [...]
+
+  minesAmount = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return Math.ceil(rows * columns * params.difficultLevel);
+  }
+
+  // [...]
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Header flagsLeft={this.minesAmount() - flagsUsed(this.state.board)} />
+          
+        <View style={styles.board}>
+          <MineField board={this.state.board} 
+           onOpenField={this.onOpenField} 
+           onSelectField={this.onSelectField} />
+        </View>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Além disso, vamos passar a propriedade _onNewGame_ passando uma arrow function que quando acionada irá chamar a função que altera o estado _setState_ e iremos passar para ela a função que cria o estado do zero, ou seja, reseta o jogo:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+import params from "../params";
+
+import Header from "../components/Header";
+import MineField from "../components/MineField";
+
+import { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+  invertFlag,
+  flagsUsed
+} from "../logic";
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = this.createState()
+  }
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  // [...]
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Header flagsLeft={this.minesAmount() - flagsUsed(this.state.board)} 
+          onNewGame={() => this.setState(this.createState())} />
+          
+        <View style={styles.board}>
+          <MineField board={this.state.board} 
+           onOpenField={this.onOpenField} 
+           onSelectField={this.onSelectField} />
+        </View>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
 ## Criando APK
 
 ### Gerando uma Chave de Upload
