@@ -4379,6 +4379,775 @@ const styles = StyleSheet.create({
 });
 ```
 
+## Selecionar Nível de Dificuldade (abrir modal ao clicar na flag)
+
+- Dentro da pasta src vamos criar uma pasta chamada _screens_ e dentro dessa pasta vamos criar o componente funcional Selecionar Nível/_LevelSelection_:
+
+``` JSX
+import React from "react";
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  Modal
+} from "react-native";
+
+const LevelSelection = (props) => {
+  return (
+    
+  )
+}
+
+const styles = StyleSheet.create({
+
+});
+
+export default LevelSelection;
+```
+
+- Vamos retornar um _Modal_ e esse modal no momento que ele for requerido para ser fechado/_onRequestClose_ ele vai chamar a função _onCancel_ que iremos receber via _props_.
+Além disso, vamos setar a visibilidade/_visible_ a partir de _props.isVisible_.
+E que o tipo de animação/_animationType_ vai ser _slide_ e a transparência/_transparent_ igual a _true_(determina se o seu modal preencherá a visão inteira. Definir isso para _true_ renderizará o modal sobre um plano de fundo transparente):
+
+``` JSX
+import React from "react";
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  Modal
+} from "react-native";
+
+const LevelSelection = (props) => {
+  return (
+    <Modal onRequestClose={props.onCancel}
+      visible={props.isVisible} animationType="slide"
+      transparent={true}>
+
+    </Modal>
+  )
+}
+
+const styles = StyleSheet.create({
+
+});
+
+export default LevelSelection;
+```
+
+- Dentro do _Modal_, vamos criar uma _View_ e é nela que colocaremos as opções de níveis. Ela irá receber o objeto de estilo quadro/_frame_:
+
+``` JSX
+import React from "react";
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  Modal
+} from "react-native";
+
+const LevelSelection = (props) => {
+  return (
+    <Modal onRequestClose={props.onCancel}
+      visible={props.isVisible} animationType="slide"
+      transparent={true}>
+      <View style={styles.frame}>
+
+      </View>
+    </Modal>
+  )
+}
+
+const styles = StyleSheet.create({
+  frame: {
+    
+  }
+});
+
+export default LevelSelection;
+```
+
+- Dentro dessa _View_ vamos criar uma outra que será o _container_ para que possamos colocar os componentes:
+
+``` JSX
+import React from "react";
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  Modal
+} from "react-native";
+
+const LevelSelection = (props) => {
+  return (
+    <Modal onRequestClose={props.onCancel}
+      visible={props.isVisible} animationType="slide"
+      transparent={true}>
+      <View style={styles.frame}>
+        <View style={styles.container}>
+          
+        </View>
+      </View>
+    </Modal>
+  )
+}
+
+const styles = StyleSheet.create({
+  frame: {
+
+  },
+  container: {
+
+  }
+});
+
+export default LevelSelection;
+```
+
+- Vamos inserir um _Text_ que vai ser o cabeçalho desse container, que vai receber o objeto de estilo _title_:
+
+``` JSX
+import React from "react";
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  Modal
+} from "react-native";
+
+const LevelSelection = (props) => {
+  return (
+    <Modal onRequestClose={props.onCancel}
+      visible={props.isVisible} animationType="slide"
+      transparent={true}>
+      <View style={styles.frame}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Selecione o Nível</Text>
+          
+        </View>
+      </View>
+    </Modal>
+  )
+}
+
+const styles = StyleSheet.create({
+  frame: {
+
+  },
+  container: {
+
+  },
+  title: {
+
+  }
+});
+
+export default LevelSelection;
+```
+
+- Em seguida, vamos ter algumas áreas clicavéis, portanto vamos inserir a _TouchableOpacity_ e dentro dela iremos um texto para representar cada um dos níveis. Inicialmente essa _TouchableOpacity_ vai receber os objetos de estilo: _button_, _bgEasy_. E a mesma também irá capturar o evento _onPress_ que irá disparar a partir de _props_ o evento _onLevelSelected_ passando _0.1_/10% que é o nível fácil:
+
+``` JSX
+import React from "react";
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  Modal
+} from "react-native";
+
+const LevelSelection = (props) => {
+  return (
+    <Modal onRequestClose={props.onCancel}
+      visible={props.isVisible} animationType="slide"
+      transparent={true}>
+      <View style={styles.frame}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Selecione o Nível</Text>
+
+          <TouchableOpacity 
+            style={[styles.button, styles.bgEasy]}
+            onPress={() => props.onLevelSelected(0.1)}>
+
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  )
+}
+
+const styles = StyleSheet.create({
+  frame: {
+
+  },
+  container: {
+
+  },
+  title: {
+
+  },
+  button: {
+
+  },
+  bgEasy: {
+    
+  }
+});
+
+export default LevelSelection;
+```
+
+- E dentro dessa _TouchableOpacity_ vamos colocar um _Text_ que irá representar o Nível Fácil e ele irá receber o objeto de estilo texto do botão/_buttonLabel_:
+
+``` JSX
+import React from "react";
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  Modal
+} from "react-native";
+
+const LevelSelection = (props) => {
+  return (
+    <Modal onRequestClose={props.onCancel}
+      visible={props.isVisible} animationType="slide"
+      transparent={true}>
+      <View style={styles.frame}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Selecione o Nível</Text>
+
+          <TouchableOpacity 
+            style={[styles.button, styles.bgEasy]}
+            onPress={() => props.onLevelSelected(0.1)}>
+            <Text style={styles.buttonLabel}>Fácil</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  )
+}
+
+const styles = StyleSheet.create({
+  frame: {
+
+  },
+  container: {
+
+  },
+  title: {
+
+  },
+  button: {
+
+  },
+  bgEasy: {
+
+  },
+  buttonLabel: {
+    
+  }
+});
+
+export default LevelSelection;
+```
+
+- E seguindo a lógica anterior, vamos inserir outras duas _TouchableOpacity_ que irão representar o nível Intermediário e o Difício:
+
+``` JSX
+import React from "react";
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  Modal
+} from "react-native";
+
+const LevelSelection = (props) => {
+  return (
+    <Modal onRequestClose={props.onCancel}
+      visible={props.isVisible} animationType="slide"
+      transparent={true}>
+      <View style={styles.frame}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Selecione o Nível</Text>
+
+          <TouchableOpacity 
+            style={[styles.button, styles.bgEasy]}
+            onPress={() => props.onLevelSelected(0.1)}>
+            <Text style={styles.buttonLabel}>Fácil</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.bgNormal]}
+            onPress={() => props.onLevelSelected(0.2)}>
+            <Text style={styles.buttonLabel}>Intermediário</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.bgHard]}
+            onPress={() => props.onLevelSelected(0.3)}>
+            <Text style={styles.buttonLabel}>Difícil</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  )
+}
+
+const styles = StyleSheet.create({
+  frame: {
+
+  },
+  container: {
+
+  },
+  title: {
+
+  },
+  button: {
+
+  },
+  bgEasy: {
+
+  },
+  bgNormal: {
+
+  },
+  bgHard: {
+
+  },
+  buttonLabel: {
+
+  }
+});
+
+export default LevelSelection;
+```
+
+- Agora, vamos aplicar as propriedades aos objetos de estilo:
+
+``` JSX
+import React from "react";
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  Modal
+} from "react-native";
+
+const LevelSelection = (props) => {
+  return (
+    <Modal onRequestClose={props.onCancel}
+      visible={props.isVisible} animationType="slide"
+      transparent={true}>
+      <View style={styles.frame}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Selecione o Nível</Text>
+
+          <TouchableOpacity 
+            style={[styles.button, styles.bgEasy]}
+            onPress={() => props.onLevelSelected(0.1)}>
+            <Text style={styles.buttonLabel}>Fácil</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.bgNormal]}
+            onPress={() => props.onLevelSelected(0.2)}>
+            <Text style={styles.buttonLabel}>Intermediário</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.bgHard]}
+            onPress={() => props.onLevelSelected(0.3)}>
+            <Text style={styles.buttonLabel}>Difícil</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  )
+}
+
+const styles = StyleSheet.create({
+  frame: {
+    backgroundColor: "rgba(0,0,0,0.6)",
+
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  container: {
+    backgroundColor: "#EEE",
+    justifyContent: "center",
+    alignItems: "center",
+
+    padding: 15
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: "bold"
+  },
+  button: {
+    marginTop: 20,
+    padding: 5
+  },
+  bgEasy: {
+    backgroundColor: "#49B65D"
+  },
+  bgNormal: {
+    backgroundColor: "#2765F7"
+  },
+  bgHard: {
+    backgroundColor: "#F26337"
+  },
+  buttonLabel: {
+    fontSize: 20,
+    color: "#EEE",
+    fontWeight: "bold"
+  }
+});
+
+export default LevelSelection;
+```
+
+- Agora, vamos voltar para o componente _App_ e vamos importar o componente/modal _LevelSelection_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+import params from "../params";
+
+import Header from "../components/Header";
+import MineField from "../components/MineField";
+import LevelSelection from "../screens/LevelSelection";
+
+import { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+  invertFlag,
+  flagsUsed
+} from "../logic";
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = this.createState()
+  }
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+    }
+  }
+
+  // [...]
+
+  render() {
+    return (
+      <View style={styles.container}>
+        // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- E dentro do estado vamos inserir a propriedade para informar se a tela do modal está aberta ou não/_showLevelSelection_ e inicialmente vai receber o valor booleano _false_.Quando clicarmos no modal automaticamente essa propriedade irá receber true e quando fecharmos novamente false:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+import params from "../params";
+
+import Header from "../components/Header";
+import MineField from "../components/MineField";
+import LevelSelection from "../screens/LevelSelection";
+
+import { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+  invertFlag,
+  flagsUsed
+} from "../logic";
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = this.createState()
+  }
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+      showLevelSelection: false,
+    }
+  }
+
+  // [...]
+
+  render() {
+    return (
+      <View style={styles.container}>
+        // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Além disso, vamos criar a função quando o nível for selecionado/_onLevelSelected_. Ela irá receber como parâmetro o nível/_level_ que vai ser um percentual(0.1, 0.2, 0.3):
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+// [...]
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = this.createState()
+  }
+
+  // [...]
+
+  onLevelSelected = (level) => {
+    
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+          // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- E vamos usar essa função para setar a quantidade de minas que vai ter no jogo a depender do nível/_level_ escolhido. E para isso vamos pegar o atributo _difficultLevel_ de dentro do arquivo _params_ e ele vai receber o _level_ que foi passado.
+E uma vez que setamos o nível de dificuldade/_difficultLevel_ para ser exatamente o nível/_level_ que recebermos, basta zerarmos o jogo chamando a função _setState_ passando a função que cria um novo estado _createState_, dessa forma vai gerado um novo jogo baseado no nível de dificuldade passado:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+// [...]
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = this.createState()
+  }
+
+  // [...]
+
+  onLevelSelected = (level) => {
+    params.difficultLevel = level;
+    this.setState(this.createState());
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+          // [...]
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Agora, vamos criar a referência para o componente _LevelSelection_ dentro do nosso trecho JSX antes do Header.
+E vamos passar o _isVisible_ exatamente o campo que colocamos dentro do estado da aplicação que é o _showLevelSelection_, então se está visível ou não vai depender dessa variável que está dentro do estado do nosso componente.
+Além disso, no _onLevelSelected_ vamos passar vamos passar a função que criamos _onLevelSelected_, ou seja, quando o usuário selecionar um dos níveis de dificuldade essa função vai ser chamada e irá setar o nível de dificuldade/_difficultLevel_ dos parâmetros/_params_ e em seguida reseta o estado do componente.
+E no _onCancel_ vamos passar uma arrow function que irá acionar o _setState_ passando para _showLevelSelection_ o valor _false_:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+import params from "../params";
+
+import Header from "../components/Header";
+import MineField from "../components/MineField";
+import LevelSelection from "../screens/LevelSelection";
+
+import { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+  invertFlag,
+  flagsUsed
+} from "../logic";
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = this.createState()
+  }
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+      showLevelSelection: false,
+    }
+  }
+
+  // [...]
+
+  onLevelSelected = (level) => {
+    params.difficultLevel = level;
+    this.setState(this.createState());
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <LevelSelection isVisible={this.state.showLevelSelection}
+          onLevelSelected={this.onLevelSelected}
+          onCancel={() => this.setState({ showLevelSelection: false })} />
+        <Header flagsLeft={this.minesAmount() - flagsUsed(this.state.board)} 
+          onNewGame={() => this.setState(this.createState())} />
+          
+        <View style={styles.board}>
+          <MineField board={this.state.board} 
+           onOpenField={this.onOpenField} 
+           onSelectField={this.onSelectField} />
+        </View>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+
+- Mas se clicarmos na _flag_ ainda não está mostrando o modal, para que isso ocorra, vamos passar para o Header a função _onFlagPress_ para ele abrir irá acionar uma arrow function que irá chamar o _setState_ passando para _showLevelSelection_ o valor _true_ para setar no estado e abrir o modal:
+
+``` JSX
+import React, {Component} from "react";
+import { StyleSheet, View, Text, Alert } from "react-native";
+
+import params from "../params";
+
+import Header from "../components/Header";
+import MineField from "../components/MineField";
+import LevelSelection from "../screens/LevelSelection";
+
+import { 
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+  invertFlag,
+  flagsUsed
+} from "../logic";
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = this.createState()
+  }
+
+  createState = () => {
+    const rows = params.getRowsAmount();
+    const columns = params.getColumnsAmount();
+    return {
+      board: createMinedBoard(rows, columns, this.minesAmount()),
+      won: false,
+      lost: false,
+      showLevelSelection: false,
+    }
+  }
+ 
+  // [...]
+
+  onLevelSelected = (level) => {
+    params.difficultLevel = level;
+    this.setState(this.createState());
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <LevelSelection isVisible={this.state.showLevelSelection}
+          onLevelSelected={this.onLevelSelected}
+          onCancel={() => this.setState({ showLevelSelection: false })} />
+        <Header flagsLeft={this.minesAmount() - flagsUsed(this.state.board)} 
+          onNewGame={() => this.setState(this.createState())} 
+          onFlagPress={() => this.setState({ showLevelSelection: true })}/>
+          
+        <View style={styles.board}>
+          <MineField board={this.state.board} 
+           onOpenField={this.onOpenField} 
+           onSelectField={this.onSelectField} />
+        </View>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // [...]
+});
+```
+ 
 ## Criando APK
 
 ### Gerando uma Chave de Upload
