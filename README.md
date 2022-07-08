@@ -2,7 +2,10 @@
 
 Construindo um aplicativo do jogo campo minado utilizando React Native.
 
-![image]()
+![image](https://user-images.githubusercontent.com/86172286/178041238-36355ee2-ea87-4b87-93ed-400d9c16bbd1.PNG)
+![image](https://user-images.githubusercontent.com/86172286/178041616-9708dc5b-c07d-4b23-a1c3-e112d45725ee.PNG)
+![image](https://user-images.githubusercontent.com/86172286/178041649-26072f53-566b-4ff8-8ce5-2a53b6839a60.PNG)
+![image](https://user-images.githubusercontent.com/86172286/178041709-7a587438-6bda-4062-803b-931b27e558af.PNG)
 
 ## Iniciando um projeto com a CLI(Command Line Interface) do React Native
 
