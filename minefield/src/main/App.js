@@ -51,14 +51,14 @@ export default class App extends Component {
 
     if (lost) {
       showMines(board)
-      Alert.alert("Você acabou de explodir!", "Fim de Jogo");
+      Alert.alert("Você acabou de explodir!", "Fim de Jogo. \nPara iniciar uma nova partida pressione o botão \"Novo Jogo\".");
     }
 
     if (won) {
-      Alert.alert("Parabéns!", "Você venceu!");
+      Alert.alert("Parabéns!", "Você venceu! \nPara iniciar uma nova partida pressione o botão \"Novo Jogo\".");
     }
 
-    this.setState({ board, won, lost }); // como a chave e o valor possuem o mesmo nome podemos simplificar dessa forma. A forma completa fica assim: { board: board, won: won, lost: lost }
+    this.setState({ board, won, lost }); // como a chave e o valsor possuem o mesmo nome podemos simplificar dessa forma. A forma completa fica assim: { board: board, won: won, lost: lost }
   }
 
   onSelectField = (row, column) => { // não precisamos receber o board, pois ele já esta no state
